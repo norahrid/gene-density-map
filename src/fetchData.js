@@ -1,11 +1,10 @@
 // Reads the gff file and converts it to a json file for easier p5.js work
+// Borrows HEAVILY from Venkat's data fetching script of the same name.
 
 const axios = require('axios');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-
-var fetchData = {};
 
 var delim = "/";
 
