@@ -1,6 +1,6 @@
 // Draws the genes on a map using the json'ed gff file
 
-var fname = "./assets/gffOutput.json";
+var fname = "../assets/gffOutput.json";
 
 var gffInfo;
 
