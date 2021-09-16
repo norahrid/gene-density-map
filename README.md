@@ -1,1 +1,1 @@
-Displays the gene density of Arabidopsis genome using the p5.js library.
+Displays the gene density of the Arabidopsis genome using the p5.js library.
