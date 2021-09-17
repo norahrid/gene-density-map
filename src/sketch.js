@@ -1,6 +1,6 @@
 // Draws the genes on a map using the json'ed gff file
 
-var fname = "../assets/gffOutput-min.json";
+var fname = "../assets/gffOutput.json";
 
 var gffInfo;
 
@@ -16,6 +16,12 @@ var totalGeneCountDisplayed = 0;
 var test = [];
 
 var scaleFactor = 1;
+
+var clickBoxLeft;
+var clickBoxTop;
+
+var clickBoxWidth = 20;
+var clickBoxHeight = 20;
 
 
 
@@ -99,6 +105,61 @@ function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
 }
 
+function mousePressed() {
+	print(mouseX, mouseY);
+	if (mouseY < 120 && mouseY > 100) {
+		var hitChromosome = "at1";
+
+
+		// // Draw the click box
+		// stroke(255, 0, 0);
+		// strokeWeight(1);
+		clickBoxLeft = mouseX - 10;
+		clickBoxTop = 100;
+
+		// rect(clickBoxLeft, clickBoxTop, clickBoxWidth, clickBoxHeight);
+
+		var boxDim = {"top": clickBoxTop, "left": clickBoxLeft, "width": clickBoxWidth, "height": clickBoxHeight}
+		var hitGenes = idGenes(hitChromosome, boxDim);
+		print(hitGenes);
+
+		//print('hit ', mouseY);
+	}
+}
+
+function mouseReleased() {
+
+}
+
+function setBoxDimensions(x) {
+	return {"left": x-10, "right": x+10, "top": 100, "bottom": 120}
+}
+
+function idGenes(chromoID, dimensions) {
+
+	var hits = [];
+
+	for (var key in gffInfo) {
+
+		if (gffInfo[key]["chromosomeId"] === chromoID) {
+			var start = (gffInfo[key]["start"]/chromosomeMaxPosition[chromoID])*windowWidth;
+			var end = (gffInfo[key]["end"]/chromosomeMaxPosition[chromoID])*windowWidth;
+
+			// print("s ", start);
+			// print("e ", end);
+			// print('l ', dimensions.left);
+			// print('last ', (dimensions.left + dimensions.width));
+			// print("\n");
+
+			if (start >= dimensions.left && end <= (dimensions.left + dimensions.width)) {
+				var gene = new Gene(gffInfo[key]["chromosomeId"], key, start, end);
+				hits.push(gene);
+			}
+		}
+
+	}
+	return hits;
+}
 
 
 function drawChromosome(chromoID, baseline) {
