@@ -15,6 +15,10 @@ var totalGeneCountDisplayed = 0;
 
 var test = [];
 
+var scaleFactor = 1;
+
+
+
 // var chromosomes = [];
 
 function preload() {
@@ -51,12 +55,14 @@ function setup() {
 		}
 	}
 
-	noLoop();
+	//noLoop();
 }
 
 function draw() {
 
 	background(0);
+
+	scale(scaleFactor);
 
 	drawChromosome("at1", 100);
 	drawChromosome("at2", 150);
@@ -64,18 +70,33 @@ function draw() {
 	drawChromosome("at4", 250);
 	drawChromosome("at5", 300);
 
-	print("Total genes: ", totalGeneCount);
-	print("Total genes drawn: ", totalGeneCountDisplayed);
 
-	print("Max end position: ", max(test));
-	print("Display width: ", displayWidth);
+	print("Total genes: ", totalGeneCount);
+	// print("Total genes drawn: ", totalGeneCountDisplayed);
+
+	// print("Max end position: ", max(test));
+	// print("Display width: ", displayWidth);
 
 }
+
+function keyPressed() {
+	// Press i to zoom in
+	if (keyCode === 73) {
+		scaleFactor *= 1.05;
+	}
+	// Press d to zoom out
+	else if (keyCode === 68) {
+		scaleFactor *= 0.95;
+	}
+
+}
+
+
 
 function drawChromosome(chromoID, baseline) {
 	for (var key in gffInfo) {
 		// Draw the gene if it belongs to the spec. chromosome
-		if (gffInfo[key]["chromosomeId"] == chromoID) {
+		if (gffInfo[key]["chromosomeId"] === chromoID) {
 
 			// Display chromosome ID
 			textSize(12);
@@ -107,11 +128,11 @@ function drawGene(start, end, baseline) {
 	//rect(start/WIDTH + 10, baseline, (end - start)/WIDTH, 20);
 	rect(startPos, baseline, width, 20);
 
-	test.push(startPos+width);
+	// test.push(startPos+width);
 
-	if (startPos + width <= displayWidth && startPos >= 0) {
-		totalGeneCountDisplayed += 1
-	} 
+	// if (startPos + width <= displayWidth && startPos >= 0) {
+	// 	totalGeneCountDisplayed += 1
+	// } 
 
 }
 
@@ -121,7 +142,7 @@ function findLargestPosition(chromoId) {
 	// Find the largest position for the spec. chromosome
 	for (var key in gffInfo) {
 
-		if (gffInfo[key]["chromosomeId"] == chromoId) {
+		if (gffInfo[key]["chromosomeId"] === chromoId) {
 			ends.push(gffInfo[key]["end"]);
 			
 		}
