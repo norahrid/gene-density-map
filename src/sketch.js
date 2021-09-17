@@ -1,6 +1,6 @@
 // Draws the genes on a map using the json'ed gff file
 
-var fname = "../assets/gffOutput.json";
+var fname = "../assets/gffOutput-min.json";
 
 var gffInfo;
 
@@ -33,7 +33,7 @@ function setup() {
 	// WIDTH = pixelDensity() * displayWidth;
 	// HEIGHT = pixelDensity * displayHeight;
 
-	createCanvas(displayWidth, displayHeight);
+	createCanvas(windowWidth, windowHeight);
 	background(0);
 
 	// For each chromosome, find the largest end position
@@ -55,7 +55,8 @@ function setup() {
 		}
 	}
 
-	//noLoop();
+	// Lag is painful with regular redraws
+	noLoop();
 }
 
 function draw() {
@@ -89,6 +90,13 @@ function keyPressed() {
 		scaleFactor *= 0.95;
 	}
 
+	// Redraws with the new scale
+	redraw();
+
+}
+
+function windowResized() {
+	resizeCanvas(windowWidth, windowHeight);
 }
 
 
@@ -122,8 +130,8 @@ function drawGene(start, end, baseline) {
 	strokeWeight(0);
 	stroke(0, 255, 0, 127);
 
-	var startPos = start * displayWidth;
-	var width = (end - start)*displayWidth;
+	var startPos = start * windowWidth;
+	var width = (end - start)*windowWidth;
 
 	//rect(start/WIDTH + 10, baseline, (end - start)/WIDTH, 20);
 	rect(startPos, baseline, width, 20);
