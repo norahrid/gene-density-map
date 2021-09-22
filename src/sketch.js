@@ -151,6 +151,7 @@ function idGenes(chromoID, dimensions) {
 			// print('last ', (dimensions.left + dimensions.width));
 			// print("\n");
 
+			// Check if gene is totally within click box
 			if (start >= dimensions.left && end <= (dimensions.left + dimensions.width)) {
 				var gene = new Gene(gffInfo[key]["chromosomeId"], key, start, end);
 				hits.push(gene);
