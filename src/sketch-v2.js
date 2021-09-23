@@ -2,7 +2,7 @@ var fname = "../assets/gffOutput.json";
 
 // var pg1, pg2, pg3, pg4, pg5;
 
-var pg;
+var pg, pg3;
 
 var maxEndPos;
 
@@ -25,6 +25,19 @@ var baseline = 25;
 
 var graphics = [];
 
+var slider;
+
+var selectedChromosome = "at1";
+
+var chromosomeColours = {
+    "at1": {"r": 254, "g": 176, "b": 120}, 
+    "at2": {"r": 241, "g": 96, "b": 93}, 
+    "at3": {"r": 183, "g": 55, "b": 121}, 
+    "at4": {"r": 114, "g": 31, "b": 129}, 
+    "at5": {"r": 44, "g": 17, "b": 95}
+};
+
+
 function preload() {
 	// Get the json file with the gff data -- creates an object
 	gffInfo = loadJSON(fname);
@@ -32,11 +45,15 @@ function preload() {
 
 function setup() {
 
+    frameRate(24);
+
     createCanvas(windowWidth, windowHeight);
     background(245);
 
     componentWidth = (windowWidth)/5;
     componentHeight = 50;
+
+    slider = new Slider(25, 25, 20, 20);
 
     // Create a list of off screen buffers -- one for each chromosome
     for (let i=0; i<chromoNum; i++) {
@@ -45,6 +62,7 @@ function setup() {
     }
 
     pg = createGraphics(windowWidth, componentHeight);
+    pg3 = createGraphics(windowWidth, componentHeight);
 
 
     // pg1 = createGraphics(componentWidth, componentHeight);
@@ -75,6 +93,8 @@ function setup() {
 }
 
 function draw() {
+
+    background(backgroundCol);
 
     // set the background colour for each off screen buffer
     for (let i=0; i<graphics.length; i++) {
@@ -116,13 +136,33 @@ function draw() {
     // image(pg4, componentWidth*3, 0);
     // image(pg5, componentWidth*4 , 0);
 
-    for (let i=0; i<chromosomes.length; i++) {
+    // add chromosome labels
 
+    for (let i=0; i<chromosomes.length; i++) {
         textSize(12);
         fill(0);
         text(chromosomes[i], componentWidth*i + 25, 75);
-
     }
+
+    if (selectedChromosome === null) {
+        drawSecondView("at1");
+    }
+    else {
+        drawSecondView(selectedChromosome);
+    }
+
+    
+    for (let i=0; i<genes.length; i++) {
+        //print(selectedChromosome);
+
+
+        if (genes[i].chromosomeId === selectedChromosome) {
+            var start = genes[i].getStartCoord(windowWidth);
+            var end = start + genes[i].getWidth(windowWidth);
+            slider.determineSelected(genes[i].geneId, start, end);
+        }
+    }
+    slider.drawThirdView();
 
 }
 
@@ -133,8 +173,9 @@ function mouseClicked() {
 
         for (let i=0; i<=chromoNum; i++) {
             if (mouseX >= componentWidth*i && mouseX <= componentWidth*(i+1)) {
-                var id = "at" + (i+1);
-                drawSecondView(id);
+                //var id = "at" + (i+1);
+                selectedChromosome = "at" + (i+1);
+                drawSecondView(selectedChromosome);
             }
         }
     }
@@ -149,7 +190,61 @@ function drawSecondView(id) {
             genes[i].display(baseline, pg, windowWidth); 
         }
     }
+
+    slider.display();
+
     image(pg, 0, 100);
+}
+
+function mousePressed() {
+
+    // updated selected chromo
+    setSelectedChromosome(mouseX, mouseY, 25, 45);
+
+    if (mouseX <= (slider.left + slider.width) && mouseX >= (slider.left)) {
+
+        // mouseX and mouseY are on the og canvas, so have to factor the img's top Y coord
+        if (mouseY <= (slider.top + slider.height) + 100 && mouseY >= slider.top + 100) {
+            slider.selected = true;
+        }
+    }
+}
+
+function mouseDragged() {
+    if (slider.selected === true) {
+
+        slider.move(mouseX);
+
+        //slider.left = mouseX;
+
+        redraw();
+
+    }
+}
+
+function mouseReleased() {
+
+    slider.resetSelectedGenes();
+    setSelectedChromosome(mouseX, mouseY, 25, 45);
+    print(selectedChromosome);
+
+    for (let i=0; i<genes.length; i++) {
+        //print(selectedChromosome);
+
+
+        if (genes[i].chromosomeId === selectedChromosome) {
+            var start = genes[i].getStartCoord(windowWidth);
+            var end = start + genes[i].getWidth(windowWidth);
+            slider.determineSelected(genes[i].geneId, start, end);
+        }
+    }
+
+    slider.drawThirdView();
+
+    //print(slider.genes);
+    // slider is not selected
+    slider.selected = false;
+
 }
 
 function findLargestPosition(chromoId) {
@@ -185,6 +280,20 @@ function mapLargestPosition() {
 
 }
 
+function setSelectedChromosome(x, y, topY, bottomY) {
+    // Only check x coord if y coord is on the chromo map
+    if (y >= topY && y <= bottomY) {
+
+        for (let i=0; i<=chromoNum; i++) {
+            if (x >= componentWidth*i && x <= componentWidth*(i+1)) {
+                //var id = "at" + (i+1);
+                selectedChromosome = "at" + (i+1);
+                //print(selectedChromosome);
+            }
+        }
+    }
+}
+
 
 class Gene {
 	constructor(chromosomeId, geneId, start, end) {
@@ -194,22 +303,95 @@ class Gene {
 		this.geneEnd = end; 
 	}
 
+    getStartCoord(w) {
+        return (this.geneStart/chromosomeMaxPosition[this.chromosomeId]) * w;
+    }
+
+    getWidth(w) {
+        return ((this.geneEnd - this.geneStart)/chromosomeMaxPosition[this.chromosomeId]) * w;
+    }
+
 	display(baseline, buffer, w) {
         var alpha = 150;
 
         // colour the gene depending on the chromosome it's part of
-        if (this.chromosomeId === "at1") buffer.fill(254, 176, 120, alpha);
-        else if (this.chromosomeId === "at2") buffer.fill(241, 96, 93, alpha);
-        else if (this.chromosomeId === "at3") buffer.fill(183, 55, 121, alpha);
-        else if (this.chromosomeId === "at4") buffer.fill(114, 31, 129, alpha);
-        else if (this.chromosomeId === "at5") buffer.fill(44, 17, 95, alpha);
+        // if (this.chromosomeId === "at1") buffer.fill(254, 176, 120, alpha);
+        // else if (this.chromosomeId === "at2") buffer.fill(241, 96, 93, alpha);
+        // else if (this.chromosomeId === "at3") buffer.fill(183, 55, 121, alpha);
+        // else if (this.chromosomeId === "at4") buffer.fill(114, 31, 129, alpha);
+        // else if (this.chromosomeId === "at5") buffer.fill(44, 17, 95, alpha);
+
+        var colKey = chromosomeColours[this.chromosomeId]
+        buffer.fill(colKey["r"], colKey["g"], colKey["b"], alpha);
 
         buffer.strokeWeight(0);
 
-        var startPos = (this.geneStart/chromosomeMaxPosition[this.chromosomeId]) * w;
-        var geneWidth = ((this.geneEnd - this.geneStart)/chromosomeMaxPosition[this.chromosomeId]) * w;
+        var startPos = this.getStartCoord(w);
+        var geneWidth = this.getWidth(w);
     
 		buffer.rect(startPos, baseline, geneWidth, 20);
 	}
+
+
+
+}
+
+class Slider {
+    constructor(left, top, width, height) {
+        this.selected = false;
+        this.left = left;
+        this.top = top;
+        this.width = width;
+        this.height = height;
+        this.genes = [];
+    }
+
+    display() {
+        // draw slider
+        pg.fill(224, 224, 224, 100);
+    
+        pg.strokeWeight(1);
+        pg.stroke(0);
+
+        pg.rect(this.left, this.top, this.width, this.height);
+    }
+
+    move(x) {
+        var dx = x - slider.left;
+        slider.left += dx;
+    }
+
+    resetSelectedGenes() {
+        this.genes = [];
+    }
+
+    determineSelected(id, gStart, gEnd) {
+
+        if (gStart >= this.left && gEnd <= (this.left + this.width)) {
+            this.genes.push({"id": id, "start": gStart, "end": gEnd});
+        }
+    }
+
+    drawThirdView() {
+
+        pg3.background(backgroundCol);
+
+        pg3.strokeWeight(0);
+        var colKey = chromosomeColours[selectedChromosome];
+        pg3.fill(colKey["r"], colKey["g"], colKey["b"], 150);
+
+    
+        for (let i=0; i<this.genes.length; i++) {
+            var s = (this.genes[i].start - this.left)/this.width;
+            var width = (this.genes[i].end - this.genes[i].start)/this.width;
+
+            fill(255, 0, 0);
+            pg3.rect(s*windowWidth, baseline, width*windowWidth, 20);
+        }
+
+
+        image(pg3, 0, 200);
+    }
+
 
 }
