@@ -16,11 +16,12 @@ var chromosomeMaxPosition;
 // Styling and arrangement
 var backgroundCol = 245;
 var baseline = 25;
-var geneHeight = 20;
+var geneHeight = 75;
 var a = 150;
-var imgTop = 100;
+var imgTop = 100 + (2*baseline);
 var componentWidth;
-var componentHeight = 50;
+var fullScreenWidth;
+var componentHeight = 100 + baseline;
 var chromosomeColours = {
     "at1": {"r": 254, "g": 176, "b": 120}, 
     "at2": {"r": 241, "g": 96, "b": 93}, 
@@ -50,10 +51,12 @@ function setup() {
     createCanvas(windowWidth, windowHeight);
     background(backgroundCol);
 
-    componentWidth = (windowWidth)/5;
+    fullScreenWidth = windowWidth - 20;
+
+    componentWidth = (fullScreenWidth)/chromoNum;
 
     // for the second view
-    slider = new Slider(baseline, baseline, 20, 20);
+    slider = new Slider(baseline, baseline, geneHeight, geneHeight);
 
     // first view to show all the chromosome on one line
     for (let i=0; i<chromoNum; i++) {
@@ -62,10 +65,10 @@ function setup() {
     }
 
     // second view to show the one selected chromosome
-    pg = createGraphics(windowWidth, componentHeight);
+    pg = createGraphics(fullScreenWidth, componentHeight);
 
     // third view to show the zoomed-in portion of the chromosome under the slider box
-    pg3 = createGraphics(windowWidth, componentHeight);
+    pg3 = createGraphics(fullScreenWidth, componentHeight);
 
     // get each chromosome's largest gene end position
     chromosomeMaxPosition = mapLargestPosition();
@@ -104,15 +107,16 @@ function draw() {
 
     // Put the image on the canvas
     for (let i=0; i<graphics.length; i++){
-        image(graphics[i], componentWidth*i, 0);
+        image(graphics[i], (componentWidth*i) + 10, 0);
     }
 
     // add chromosome labels
     for (let i=0; i<chromoNum; i++) {
         textSize(12);
-        fill(0);
-        text("at" + (i+1), componentWidth*i + 25, 75);
+        fill(169);
+        text("at" + (i+1), componentWidth*i + 25, 15);
     }
+
 
     drawSecondView(selectedChromosome);
 
@@ -140,11 +144,12 @@ function mousePressed() {
     setSelectedChromosome(mouseX, mouseY, baseline, baseline+geneHeight);
 
     if (mouseX <= (slider.left + slider.width) && mouseX >= (slider.left)) {
-        // mouseX and mouseY are on the og canvas, so have to factor the img's top Y coord
+        // mouseX and mouseY are on the og canvas, so have to add in the img's top Y coord
         if (mouseY <= (slider.top + slider.height) + imgTop && mouseY >= slider.top + imgTop) {
             slider.selected = true;
         }
     }
+    //redraw();
 }
 
 function mouseDragged() {
@@ -204,11 +209,16 @@ function drawSecondView(id) {
 
     for (let i=0; i<genes.length; i++) {
         if (genes[i].chromosomeId === id) {
-            genes[i].display(baseline, pg, windowWidth); 
+            genes[i].display(baseline, pg, fullScreenWidth); 
         }
     }
+
+    pg.fill(169);
+    pg.text("Chromosome: " + selectedChromosome, 25, baseline-10);
+
     slider.display();
-    image(pg, 0, imgTop);
+
+    image(pg, 10, imgTop);
 }
 
 function setSelectedChromosome(x, y, topY, bottomY) {
@@ -228,8 +238,8 @@ function setSelectedChromosome(x, y, topY, bottomY) {
 function selectGenes() {
     for (let i=0; i<genes.length; i++) {
         if (genes[i].chromosomeId === selectedChromosome) {
-            var start = genes[i].getStartCoord(windowWidth);
-            var end = start + genes[i].getWidth(windowWidth);
+            var start = genes[i].getStartCoord(fullScreenWidth);
+            var end = start + genes[i].getWidth(fullScreenWidth);
             slider.determineSelected(genes[i].geneId, start, end);
         }
     }
@@ -278,7 +288,7 @@ class Slider {
 
     display() {
         // draw slider
-        pg.fill(224, 224, 224, 100);
+        pg.fill(224, 224, 224, 25);
     
         pg.strokeWeight(1);
         pg.stroke(0);
@@ -308,13 +318,17 @@ class Slider {
         var colKey = chromosomeColours[selectedChromosome];
         pg3.fill(colKey["r"], colKey["g"], colKey["b"], a);
 
-    
         for (let i=0; i<this.genes.length; i++) {
+
+            // shift all affected genes back by the slider's left position -- puts the slider's left value at 0
             var s = (this.genes[i].start - this.left)/this.width;
             var width = (this.genes[i].end - this.genes[i].start)/this.width;
 
-            pg3.rect(s*windowWidth, baseline, width*windowWidth, geneHeight);
+            pg3.rect(s*fullScreenWidth, baseline, width*fullScreenWidth, geneHeight);
         }
-        image(pg3, 0, 2*imgTop);
+        pg3.fill(169);
+        pg3.text("Subregion: " + selectedChromosome, 25, baseline-10);
+
+        image(pg3, 10, 2*imgTop);
     }
 }
