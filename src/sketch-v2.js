@@ -176,7 +176,7 @@ function mouseClicked() {
     }
     
     if (mouseY >= baseline*2 + (2*imgTop) && mouseY <= (baseline*2) + (2*imgTop) + geneHeight) {
-        
+        clickedGenes = [];
         var convertedX = ((mouseX/fullScreenWidth) * slider.width) + slider.left;
     
         for (let j=0; j<slider.genes.length; j++) {
@@ -186,6 +186,7 @@ function mouseClicked() {
                 //print(slider.genes[j].id);
             }  
         }
+        //print('Genes: ', clickedGenes);
     }
     redraw();
 }
@@ -198,6 +199,10 @@ function mousePressed() {
         // mouseX and mouseY are on the og canvas, so have to add in the img's top Y coord
         if (mouseY <= (slider.top + slider.height) + imgTop + baseline && mouseY >= slider.top + imgTop + baseline) {
             slider.selected = true;
+
+            // unset the genes that have been selected since we're moving positions
+            clickedGenes = [];
+            doubleClickedGene = null;
         }
     }
     //redraw();
@@ -241,7 +246,7 @@ function doubleClicked() {
             if (mouseX >= start && mouseX <= start + width) {
                 // if gene is selected with a double click, record it
                 doubleClickedGene = clickedGenes[i];
-                print('HIT ', clickedGenes[i].id);
+                //print('HIT ', clickedGenes[i].id);
             }
         }
     }
@@ -476,7 +481,6 @@ class Slider {
     }
 
     drawThirdView() {
-        // background(backgroundCol);
         pg3.background(backgroundCol);
         
         pg3.strokeWeight(0);
@@ -488,6 +492,7 @@ class Slider {
             // shift all affected genes back by the slider's left position -- puts the slider's left value at 0
             var s = (this.genes[i].start - this.left)/this.width;
             var width = (this.genes[i].end - this.genes[i].start)/this.width;
+
 
             pg3.rect(s*fullScreenWidth, baseline, width*fullScreenWidth, geneHeight);
         }
