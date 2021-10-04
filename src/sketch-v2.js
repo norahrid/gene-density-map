@@ -19,6 +19,7 @@ var chromosomeMinPosition;
 // Styling and arrangement
 var margin = 20;
 var backgroundCol = 245;
+var backgroundTextCol = 169;
 var baseline = 25;
 var geneHeight = 75;
 var a = 150;
@@ -41,12 +42,12 @@ var pg, pg3, pg4;
 // default when page loads
 var selectedChromosome = "at1";
 
+// selection
 var clickedGenes = [];
-
-var minPos;
-
 var doubleClickedGene;
 
+// needed for drawing the gene closeup
+var minPos;
 
 // ========================================
 
@@ -86,17 +87,6 @@ function setup() {
         );
 
     }
-
-    // cnv.mouseOver(showInfo);
-
-    // add chromosome labels
-    // for (let i=0; i<chromoNum; i++) {
-    //     textSize(12);
-    //     fill(169);
-    //     text("at" + (i+1), componentWidth*i + margin, 0);
-    // }
-    //maxEndPos = max(endPos);
-
     noLoop();
 }
 
@@ -116,7 +106,8 @@ function draw() {
     // third view to show the zoomed-in portion of the chromosome under the slider box
     pg3 = createGraphics(fullScreenWidth, componentHeight);
 
-    pg4 = createGraphics(fullScreenWidth, componentHeight+35);
+    // fourth view to show the zoomed in version of the selected genes
+    pg4 = createGraphics(fullScreenWidth, componentHeight+baseline+10);
     
 
     // set the background colour for each off screen buffer
@@ -133,7 +124,7 @@ function draw() {
     // add chromosome labels
     for (let i=0; i<chromoNum; i++) {
         graphics[i].textSize(12);
-        graphics[i].fill(169);
+        graphics[i].fill(backgroundTextCol);
         graphics[i].text("at" + (i+1), 20, 10);
     }
     
@@ -153,39 +144,19 @@ function draw() {
     // 3rd view
     slider.resetSelectedGenes();
     selectGenes();
-    //print(slider.genes);
-
     slider.drawThirdView(); 
 
+    var v3Scale = new ScaleLine([slider.left, slider.left + slider.width], pg3);
+    v3Scale.display(imgTop*2, true);
+
+    // fourth view
     drawFourthView();
 
-    
     if (typeof doubleClickedGene !== 'undefined') {
-        // var v4Scale = new ScaleLine([gffInfo[doubleClickedGene.id].start, gffInfo[doubleClickedGene.id].end], pg4);
         var v4Scale = new ScaleLine([], pg4);
         v4Scale.display(imgTop*3, false);
     
     }
-
-
-
-    var leftSide = (slider.left/fullScreenWidth) * chromosomeMaxPosition[selectedChromosome];
-    var rightSide = ((slider.left + slider.width)/fullScreenWidth) * chromosomeMaxPosition[selectedChromosome];
-
-    var startPos = (slider.left - slider.left)/slider.width;
-    var endPos = ((slider.left + slider.width)-slider.left)/slider.width
-
-    // print(startPos);
-    // print(endPos * chromosomeMaxPosition[selectedChromosome]);
-    // print(slider.left + slider.width);
-    // print(rightSide);
-
-    var v3Scale = new ScaleLine([slider.left, slider.left + slider.width], pg3);
-    //print(v3Scale.positions);
-    v3Scale.display(imgTop*2, true);
-    // image(pg3, margin/2, 2*imgTop);
-
-
 }
 
 // Interactivity =============================
@@ -213,13 +184,9 @@ function mouseClicked() {
             if (convertedX >= slider.genes[j].start - 0.5 && convertedX <= slider.genes[j].end + 0.5) {
                 clickedGenes.push(slider.genes[j]);
                 //print(slider.genes[j].id);
-            }
-
-            
+            }  
         }
     }
-
-
     redraw();
 }
 
@@ -267,14 +234,16 @@ function windowResized() {
 function doubleClicked() {
     if (mouseY >= baseline*2 + (3*imgTop) && mouseY <= (baseline*2) + (3*imgTop) + geneHeight) {
         for (let i=0; i<clickedGenes.length; i++) {
+
+            // Move all selected genes to the left by the smallest start position + scale by 1000
             var start = (clickedGenes[i].start - (minPos - 0.15)) * 1000;
             var width = (clickedGenes[i].end - clickedGenes[i].start) * 1000;
             if (mouseX >= start && mouseX <= start + width) {
+                // if gene is selected with a double click, record it
                 doubleClickedGene = clickedGenes[i];
                 print('HIT ', clickedGenes[i].id);
             }
         }
-        //print(mouseY);
     }
     redraw();
 }
@@ -316,7 +285,6 @@ function mapPosition(isMax) {
 
 function drawSecondView(id) {
     pg.background(backgroundCol);
-    //background(backgroundCol);
 
     for (let i=0; i<genes.length; i++) {
         if (genes[i].chromosomeId === id) {
@@ -324,12 +292,12 @@ function drawSecondView(id) {
         }
     }
 
-    pg.fill(169);
-    pg.text("Chromosome: " + selectedChromosome, 25, 15);
+    pg.fill(backgroundTextCol);
+    pg.text("Chromosome: " + selectedChromosome, 25, baseline-10);
 
     slider.display();
 
-    image(pg, margin/2, imgTop+25);
+    image(pg, margin/2, imgTop+baseline);
 }
 
 function setSelectedChromosome(x, y, topY, bottomY) {
@@ -367,9 +335,7 @@ function setIntervals(start, end, intervalNum) {
     for (let i=start; i<=end; i+=intervalSize) {
         intervals.push(i);
     }
-
     intervals.push(end);
-    //print(intervals);
     return intervals;
 }
 
@@ -377,88 +343,57 @@ function drawFourthView() {
 
     pg4.background(240);
 
+    // No genes selected -- prompt for a click
     if (clickedGenes.length === 0) {
-        pg4.fill(255, 0, 0);
-        pg4.text("Nothing yet", 10, 50);
+        pg4.fill(backgroundTextCol);
+        pg4.textAlign(CENTER, CENTER);
+        pg4.text("Click on a subregion to select genes", (fullScreenWidth)/2, componentHeight);
     }
 
     else {
-        var colKey = chromosomeColours[selectedChromosome];
-        pg4.fill(colKey["r"], colKey["g"], colKey["b"], a);
-        fill(colKey["r"], colKey["g"], colKey["b"], a);
-
-   
-        strokeWeight(0);
-
+        // find the smallest start position of the selected genes
         var pos = [];
         for (let i=0; i<clickedGenes.length; i++) {
             pos.push(clickedGenes[i].start);
         }
-
         minPos = min(pos);
-        //print(minPos);
-
-
-
+ 
         for (let i=0; i<clickedGenes.length; i++) {
+
+            // 
             var start = (clickedGenes[i].start - (minPos - 0.15)) * 1000;
             var width = (clickedGenes[i].end - clickedGenes[i].start) * 1000;
 
-            // var start = ((clickedGenes[i].start - slider.left)/slider.width);
-            // var width = ((clickedGenes[i].end - clickedGenes[i].start)/slider.width);
-
-            // print(start, start + width);
-            // print(fullScreenWidth);
-
-            //print(genes[i]);
-
-            print(doubleClickedGene);
-
             if (doubleClickedGene === clickedGenes[i]) {
-                pg4.fill(169);
-                pg4.stroke(169);
+
+                // styling
+                pg4.fill(backgroundTextCol);
+                pg4.stroke(backgroundTextCol);
                 pg4.strokeWeight(1);
-                print(doubleClickedGene);
-                pg4.text("Selected gene: " + doubleClickedGene.id, 10, 25);
-                pg4.text(gffInfo[doubleClickedGene.id].start, start-40, baseline+geneHeight + 25);
-                pg4.text(gffInfo[doubleClickedGene.id].end, start+width, baseline+geneHeight + 25);
-                pg4.line(start, baseline+geneHeight+5, start, baseline+geneHeight+15);
-                pg4.line(start+width, baseline+geneHeight+5, start+width, baseline+geneHeight+15);
 
-                
+                // display selected gene's id, og start and end
+                pg4.text("Selected gene: " + doubleClickedGene.id, 10, baseline);
+                pg4.text(gffInfo[doubleClickedGene.id].start, start-40, (baseline*2)+geneHeight);
+                pg4.text(gffInfo[doubleClickedGene.id].end, start+width, (baseline*2)+geneHeight);
+                pg4.line(start, baseline+geneHeight+5, start, baseline+geneHeight+(baseline-10));
+                pg4.line(start+width, baseline+geneHeight+5, start+width, baseline+geneHeight+(baseline-10));
 
-                
+                // get the colour of the currently selected chromosome
                 var colKey = chromosomeColours[selectedChromosome];
                 pg4.fill(colKey["r"], colKey["g"], colKey["b"], a);
-
-
-                //print(gffInfo);
-                
 
             }
             else {
                 pg4.fill(200);
             }
-            pg4.strokeWeight(0);
-            // var start = (clickedGenes[i].start - (minPos - 0.15)) * 1000;
-            // var width = (clickedGenes[i].end - clickedGenes[i].start) * 1000;
-            pg4.rect(start, baseline+5, width, geneHeight);
 
-            //rect(start, (3*imgTop)+baseline + baseline, width, geneHeight);
+            // draw gene
+            pg4.strokeWeight(0);
+            pg4.rect(start, baseline+5, width, geneHeight);
         }
     }
-
-    //print(clickedGenes);
-
     image(pg4, margin/2, (3*imgTop)+baseline);
-
-
 }
-
-// function showInfo() {
-//     print(mouseX, mouseY);
-
-// }
 
 // Classes ===========================================
 
@@ -544,7 +479,6 @@ class Slider {
         // background(backgroundCol);
         pg3.background(backgroundCol);
         
-        //print(this.genes);
         pg3.strokeWeight(0);
         var colKey = chromosomeColours[selectedChromosome];
         pg3.fill(colKey["r"], colKey["g"], colKey["b"], a);
@@ -557,15 +491,9 @@ class Slider {
 
             pg3.rect(s*fullScreenWidth, baseline, width*fullScreenWidth, geneHeight);
         }
-        pg3.fill(169);
+        pg3.fill(backgroundTextCol);
         pg3.textSize(12);
         pg3.text("Subregion: " + selectedChromosome, margin, baseline-10);
-
-        //pg3.strokeWeight(1);
-
-
-
-        //pg3.line(margin/2, baseline + geneHeight + 5, fullScreenWidth, baseline + geneHeight + 5);
 
         image(pg3, margin/2, (2*imgTop)+baseline);
     }
@@ -579,28 +507,6 @@ class Slider {
             print('hit ', g.geneId, g.geneStart, g.geneEnd);
         }
     }
-
-    getMinMax(isMax) {
-        var pos = [];
-
-        for (let i=0; i<this.genes.length; i++) {
-            if (isMax) {
-                pos.push(this.genes[i].end);
-            }
-            else {
-                pos.push(this.genes[i].start);
-            }
-        }
-
-        if (isMax) {
-            return max(pos);
-
-        }
-        else {
-            return min(pos);
-        }
-    }
-
 }
 
 class ScaleLine {
@@ -612,10 +518,10 @@ class ScaleLine {
     display(topPos, customPos) {
 
         // styling
-        stroke(169);
+        stroke(backgroundTextCol);
         strokeWeight(1);
         textSize(10);
-        fill(169);
+        fill(backgroundTextCol);
 
         var maxEnd = max(this.positions);
         var yPos = topPos + componentHeight + baseline*2;
@@ -637,28 +543,22 @@ class ScaleLine {
                 }
             }
             else {
+                // relative position -- i.e., where to put the label
                 actualPos = (this.positions[i]/maxEnd) * fullScreenWidth;
+                // the og position of the gene listed in the gff file
                 label = parseInt(this.positions[i]);
             }
 
-
+            // determine amount have to shift text labels so they're visible
             if (i === this.positions.length-1) {
                 shiftAmt = -30;
-                // line(actualPos+10, yPos-20, actualPos + 10, yPos-10);
-                // text(this.positions[i], actualPos - 30, (imgTop ) + 150);
             }
             else {
                 shiftAmt = 5;
-                // line(actualPos + 10, yPos-20, actualPos+ 10, yPos-10);
-                // text(this.positions[i], actualPos + 5, (imgTop) + 150);
             }
-
             line(actualPos + 10, yPos - 20, actualPos + 10, yPos - 10);
             text(label, actualPos + shiftAmt, yPos);
         }
-
         line(margin/2, yPos-15, fullScreenWidth + 10, yPos-15);
-        // this.buffer.line(margin/2, baseline + geneHeight + 5, margin/2, baseline + geneHeight + 15);
-        // this.buffer.line(fullScreenWidth, baseline + geneHeight + 5, fullScreenWidth, baseline + geneHeight + 15);
     }
 }
