@@ -49,6 +49,9 @@ var doubleClickedGene;
 // needed for drawing the gene closeup
 var minPos;
 
+// indicate click position on third view
+var ptr;
+
 // ========================================
 
 function preload() {
@@ -69,6 +72,9 @@ function setup() {
 
     // for the second view
     slider = new Slider(baseline, baseline, geneHeight, geneHeight);
+
+    // for the third view
+    ptr = new Pointer();
 
     // get each chromosome's smallest and largest gene position
     chromosomeMaxPosition = mapPosition(true);
@@ -131,7 +137,7 @@ function draw() {
 
     // Put the image on the canvas
     for (let i=0; i<graphics.length; i++){
-        image(graphics[i], (componentWidth*i) + 10, 25);
+        image(graphics[i], (componentWidth*i) + 10, baseline);
     }
 
     
@@ -163,13 +169,13 @@ function draw() {
 
 function mouseClicked() {
 
-
     // Only check x coord if y coord is on the chromo map
     if (mouseY >= baseline*2 && mouseY <= (baseline*2) + geneHeight) {
         clickedGenes = [];
         for (let i=0; i<=chromoNum; i++) {
             if (mouseX >= componentWidth*i && mouseX <= componentWidth*(i+1)) {
                 selectedChromosome = "at" + (i+1);
+                ptr.unsetClicked();
                 //drawSecondView(selectedChromosome);
             }
         }
@@ -178,7 +184,7 @@ function mouseClicked() {
     if (mouseY >= baseline*2 + (2*imgTop) && mouseY <= (baseline*2) + (2*imgTop) + geneHeight) {
         clickedGenes = [];
         var convertedX = ((mouseX/fullScreenWidth) * slider.width) + slider.left;
-    
+        ptr.setClicked(mouseX);
         for (let j=0; j<slider.genes.length; j++) {
             //print('start ', slider.genes[j].start)
             if (convertedX >= slider.genes[j].start - 0.5 && convertedX <= slider.genes[j].end + 0.5) {
@@ -189,6 +195,17 @@ function mouseClicked() {
         //print('Genes: ', clickedGenes);
     }
     redraw();
+
+    // if (thirdViewClicked) {
+    //     strokeWeight(0);
+    //     fill(backgroundTextCol);
+    //     triangle(mouseX, (baseline*2) + (2*imgTop) + geneHeight, mouseX-5, (baseline*2) + (2*imgTop) + geneHeight + 15, mouseX+5, (baseline*2) + (2*imgTop) + geneHeight + 15);
+
+    // }
+
+    // triangle(mouseX-0.5, (baseline*2) + (2*imgTop) + geneHeight-10,
+    //     mouseX+0.5, (baseline*2) + (2*imgTop) + geneHeight -10, ((mouseX+0.5)-(mouseX-0.5))-2, 
+    //     (baseline*2) + (2*imgTop) + geneHeight)
 }
 
 function mousePressed() {
@@ -199,6 +216,7 @@ function mousePressed() {
         // mouseX and mouseY are on the og canvas, so have to add in the img's top Y coord
         if (mouseY <= (slider.top + slider.height) + imgTop + baseline && mouseY >= slider.top + imgTop + baseline) {
             slider.selected = true;
+            ptr.unsetClicked();
 
             // unset the genes that have been selected since we're moving positions
             clickedGenes = [];
@@ -400,6 +418,15 @@ function drawFourthView() {
     image(pg4, margin/2, (3*imgTop)+baseline);
 }
 
+function containsGene(gene, listOfGenes) {
+    for (let i=0; i<listOfGenes.length; i++) {
+        if (listOfGenes[i] === gene) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // Classes ===========================================
 
 class Gene {
@@ -493,14 +520,23 @@ class Slider {
             var s = (this.genes[i].start - this.left)/this.width;
             var width = (this.genes[i].end - this.genes[i].start)/this.width;
 
+            // var contains = containsGene(this.genes[i], clickedGenes);
+            // if (contains) {
+            //     pg3.fill(255, 0, 0);
+            // }
 
             pg3.rect(s*fullScreenWidth, baseline, width*fullScreenWidth, geneHeight);
         }
+
         pg3.fill(backgroundTextCol);
         pg3.textSize(12);
         pg3.text("Subregion: " + selectedChromosome, margin, baseline-10);
 
+        ptr.display();
+
         image(pg3, margin/2, (2*imgTop)+baseline);
+
+
     }
 
     getClickedGene(g, x) {
@@ -565,5 +601,36 @@ class ScaleLine {
             text(label, actualPos + shiftAmt, yPos);
         }
         line(margin/2, yPos-15, fullScreenWidth + 10, yPos-15);
+    }
+}
+
+class Pointer {
+    constructor() {
+        this.thirdViewClicked = false;
+        this.xPos = null;
+    }
+
+    setClicked(x) {
+        this.thirdViewClicked = true;
+        this.xPos = x;
+    }
+
+    unsetClicked() {
+        this.thirdViewClicked = false;
+        this.xPos = null;
+    }
+
+    display() {
+        if (this.thirdViewClicked) {
+            strokeWeight(0);
+            fill(backgroundTextCol);
+            triangle(
+                this.xPos, (baseline*2) + (2*imgTop) + geneHeight, 
+                this.xPos-5, (baseline*2) + (2*imgTop) + geneHeight + 15, 
+                this.xPos+5, (baseline*2) + (2*imgTop) + geneHeight + 15
+            );
+        }
+
+
     }
 }
