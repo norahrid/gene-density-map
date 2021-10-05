@@ -168,7 +168,6 @@ function draw() {
 // Interactivity =============================
 
 function mouseClicked() {
-
     // Only check x coord if y coord is on the chromo map
     if (mouseY >= baseline*2 && mouseY <= (baseline*2) + geneHeight) {
         clickedGenes = [];
@@ -192,20 +191,8 @@ function mouseClicked() {
                 //print(slider.genes[j].id);
             }  
         }
-        //print('Genes: ', clickedGenes);
     }
     redraw();
-
-    // if (thirdViewClicked) {
-    //     strokeWeight(0);
-    //     fill(backgroundTextCol);
-    //     triangle(mouseX, (baseline*2) + (2*imgTop) + geneHeight, mouseX-5, (baseline*2) + (2*imgTop) + geneHeight + 15, mouseX+5, (baseline*2) + (2*imgTop) + geneHeight + 15);
-
-    // }
-
-    // triangle(mouseX-0.5, (baseline*2) + (2*imgTop) + geneHeight-10,
-    //     mouseX+0.5, (baseline*2) + (2*imgTop) + geneHeight -10, ((mouseX+0.5)-(mouseX-0.5))-2, 
-    //     (baseline*2) + (2*imgTop) + geneHeight)
 }
 
 function mousePressed() {
@@ -216,11 +203,11 @@ function mousePressed() {
         // mouseX and mouseY are on the og canvas, so have to add in the img's top Y coord
         if (mouseY <= (slider.top + slider.height) + imgTop + baseline && mouseY >= slider.top + imgTop + baseline) {
             slider.selected = true;
-            ptr.unsetClicked();
-
+            
             // unset the genes that have been selected since we're moving positions
             clickedGenes = [];
             doubleClickedGene = null;
+            ptr.unsetClicked();
         }
     }
     //redraw();
@@ -294,7 +281,6 @@ function findMinMaxPosition(chromoId, isMax) {
 }
 
 function mapPosition(isMax) {
-
 	var chromoPos = {};
 
 	var chromosomes = ["at1", "at2", "at3", "at4", "at5"];
@@ -348,9 +334,6 @@ function selectGenes() {
 }
 
 function setIntervals(start, end, intervalNum) {
-
-    //print(start);
-
     var intervalSize = end/intervalNum
 
     var intervals = [];
@@ -363,7 +346,6 @@ function setIntervals(start, end, intervalNum) {
 }
 
 function drawFourthView() {
-
     pg4.background(240);
 
     // No genes selected -- prompt for a click
@@ -416,15 +398,6 @@ function drawFourthView() {
         }
     }
     image(pg4, margin/2, (3*imgTop)+baseline);
-}
-
-function containsGene(gene, listOfGenes) {
-    for (let i=0; i<listOfGenes.length; i++) {
-        if (listOfGenes[i] === gene) {
-            return true;
-        }
-    }
-    return false;
 }
 
 // Classes ===========================================
@@ -519,12 +492,6 @@ class Slider {
             // shift all affected genes back by the slider's left position -- puts the slider's left value at 0
             var s = (this.genes[i].start - this.left)/this.width;
             var width = (this.genes[i].end - this.genes[i].start)/this.width;
-
-            // var contains = containsGene(this.genes[i], clickedGenes);
-            // if (contains) {
-            //     pg3.fill(255, 0, 0);
-            // }
-
             pg3.rect(s*fullScreenWidth, baseline, width*fullScreenWidth, geneHeight);
         }
 
@@ -630,7 +597,5 @@ class Pointer {
                 this.xPos+5, (baseline*2) + (2*imgTop) + geneHeight + 15
             );
         }
-
-
     }
 }
