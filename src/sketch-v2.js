@@ -2,7 +2,7 @@
 
 var cnv;
 
-var fname = "../assets/gffOutput.json";
+var fname = "assets/gffOutput.json";
 
 var chromoNum = 5;
 
