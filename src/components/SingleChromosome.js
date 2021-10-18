@@ -10,7 +10,7 @@ const SingleChromosome = props => {
     const Sketch = (p) => {
 
         var fullScreenWidth;
-        var selectedChromosome;
+        //var selectedChromosome;
         var cnv;
         var pg2;
         var slider;
@@ -27,15 +27,16 @@ const SingleChromosome = props => {
         p.draw = () => {
             p.background(backgroundColour);
 
+            slider.resetSelectedGenes();
+            //setSelectedChromosome(p.mouseX, p.mouseY, props.styling.baseline*2, (props.styling.baseline*2)+props.styling.geneHeight);
+            selectGenes();
+            //p.print('after ', slider.genes);
+            props.secondViewToParentGenes(slider.genes);
+
             // second view to show the one selected chromosome
             pg2 = p.createGraphics(fullScreenWidth, componentHeight);
 
-            if (props.selectedChromosome === "") {
-                selectedChromosome = "at1";
-            }
-            else {
-                selectedChromosome = props.selectedChromosome;
-            }
+            //p.print('chromo ', selectedChromosome);
 
             // 2nd view
             drawSecondView(props.genes, 
@@ -57,6 +58,7 @@ const SingleChromosome = props => {
                     slider.setSelected();
                 }
             }
+            p.redraw();
         }
 
         p.mouseDragged = () => {
@@ -68,19 +70,21 @@ const SingleChromosome = props => {
         }
 
         p.mouseReleased = () => {
+            // p.print('released');
+            // // done dragging the slider
+            // //if (slider.selected === true) {
+            // slider.resetSelectedGenes();
+            // //p.print('b4 ', slider.genes);
+            // //setSelectedChromosome(p.mouseX, p.mouseY, props.styling.baseline*2, (props.styling.baseline*2)+props.styling.geneHeight);
+            // selectGenes();
+            // //p.print('after ', slider.genes);
+            // props.secondViewToParentGenes(slider.genes);
+        
+            // slider is no longer selected
+            slider.unsetSelected();
+            //}
 
-           
-            if (slider.selected === true) {
-                slider.resetSelectedGenes();
-                //setSelectedChromosome(p.mouseX, p.mouseY, props.styling.baseline*2, (props.styling.baseline*2)+props.styling.geneHeight);
-            
-                selectGenes();
-                props.secondViewToParentGenes(slider.genes);
-            
-                // slider is no longer selected
-                slider.unsetSelected();
-
-            }
+            p.redraw();
 
         }
 
@@ -88,7 +92,7 @@ const SingleChromosome = props => {
             pg2.background(bgCol);
 
             for (let i=0; i<genes.length; i++) {
-                if (genes[i].chromosomeId === selectedChromosome) {
+                if (genes[i].chromosomeId === props.selectedChromosome) {
                     display(genes[i], pg2, fullScreenWidth, gHeight, colours, alphaWeight);
                 }
             }
@@ -98,7 +102,7 @@ const SingleChromosome = props => {
         
             slider.display();
 
-            var intervals = setIntervals(props.chromosomeMinPosition[selectedChromosome], props.chromosomeMaxPosition[selectedChromosome], 7);
+            var intervals = setIntervals(props.chromosomeMinPosition[props.selectedChromosome], props.chromosomeMaxPosition[props.selectedChromosome], 7);
             var v2Scale = new ScaleLine(intervals, pg2);
             v2Scale.display(geneHeight + (2*baseline));
         
@@ -138,13 +142,15 @@ const SingleChromosome = props => {
         }
 
         function selectGenes() {
+            //p.print('selected chromo: ', selectedChromosome);
             for (let i=0; i<props.genes.length; i++) {
-                if (props.genes[i].chromosomeId === selectedChromosome) {
+                if (props.genes[i].chromosomeId === props.selectedChromosome) {
                     var start = getStartCoord(props.genes[i], fullScreenWidth);
                     var end = start + getWidth(props.genes[i], fullScreenWidth);
                     slider.determineSelected(props.genes[i].geneId, start, end);
                 }
             }
+           // p.print(slider.genes);
         }
 
         class Slider {
@@ -197,8 +203,14 @@ const SingleChromosome = props => {
             }
         
             determineSelected(id, gStart, gEnd) {
+                // p.print(gStart);
+                // p.print(gEnd);
+                // p.print(this.left);
+                // p.print(this.left + this.width);
+                // p.print('\n');
                 if (gStart >= this.left && gEnd <= (this.left + this.width)) {
                     this.genes.push({"id": id, "start": gStart, "end": gEnd});
+                    //p.print('hit');
                 }
             }
         

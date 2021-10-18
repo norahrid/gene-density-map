@@ -5,6 +5,7 @@ import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight,
 
 const AllChromosomes = props => {
 
+
     const containerRef = useRef();
 
     const Sketch = (p) => {

@@ -7,7 +7,7 @@ import data from "./gffOutput.json";
 
 function App() {
 
-  const [selectedChromosome, setSelectedChromosome] = useState('');
+  const [selectedChromosome, setSelectedChromosome] = useState("at1");
   const [sliderPosition, setSliderPosition] = useState(25);
   const [selectedGenes, setSelectedGenes] = useState([]);
   const [clickedGenes, setClickedGenes] = useState([]);

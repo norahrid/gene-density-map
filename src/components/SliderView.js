@@ -5,12 +5,16 @@ import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight,
 
 const SliderView = props => {
 
+    console.log("chromo in slider view ", props.selectedGenes);
+
     const containerRef = useRef();
+
+    //console.log('selected ', props.selectedGenes);
 
     const Sketch = p => {
 
         var fullScreenWidth;
-        var selectedChromosome;
+        // var selectedChromosome;
         var pg3;
         var ptr;
         var clickedGenes;
@@ -25,6 +29,10 @@ const SliderView = props => {
         }
 
         p.draw = () => {
+
+            // if (props.selectedChromosome === "") selectedChromosome = "at1";
+            // else selectedChromosome = props.selectedChromosome;
+
             p.background(backgroundColour);
 
             // 3rd view to show the genes contained in the slider
@@ -40,7 +48,7 @@ const SliderView = props => {
         }
 
         p.mouseReleased = () => {
-            p.print(p.mouseY);
+            //p.print(p.mouseY);
             if (p.mouseY >= baseline && p.mouseY <= baseline + geneHeight) {
                 clickedGenes = [];
                 ptr.setClicked(p.mouseX);
@@ -60,13 +68,13 @@ const SliderView = props => {
         }
 
         function drawThirdView(bgCol, colours, gHeight, margin, alphaWeight) {
-            if (props.selectedChromosome === "") selectedChromosome = "at1";
-            else selectedChromosome = props.selectedChromosome;
+            // if (props.selectedChromosome === "") selectedChromosome = "at1";
+            // else selectedChromosome = props.selectedChromosome;
 
             pg3.background(bgCol);
             
             pg3.strokeWeight(0);
-            var colKey = colours[selectedChromosome];
+            var colKey = colours[props.selectedChromosome];
             pg3.fill(colKey["r"], colKey["g"], colKey["b"], alphaWeight);
     
             for (let i=0; i<props.selectedGenes.length; i++) {
@@ -78,13 +86,13 @@ const SliderView = props => {
     
             pg3.fill(backgroundTextColour);
             pg3.textSize(12);
-            pg3.text("Subregion: " + selectedChromosome, margin, baseline-10);
+            pg3.text("Subregion: " + props.selectedChromosome, margin, baseline-10);
     
 
             var v3Scale = new ScaleLine([props.sliderPosition, props.sliderPosition+sliderWidth], pg3);
             v3Scale.display(geneHeight + (2*baseline));
 
-            ptr.display();
+            //ptr.display();
 
             // pg3.fill(255, 0, 0);
             // pg3.rect(50, 50, 15, 15);
@@ -100,8 +108,8 @@ const SliderView = props => {
         
             display(topPos) {
 
-                if (props.selectedChromosome === "") selectedChromosome = "at1";
-                else selectedChromosome = props.selectedChromosome;
+                // if (props.selectedChromosome === "") selectedChromosome = "at1";
+                // else selectedChromosome = props.selectedChromosome;
         
                 // styling
                 pg3.stroke(backgroundTextColour);
@@ -121,10 +129,10 @@ const SliderView = props => {
     
                     // TODO: temp fix-- find a better way
                     if (props.sliderPosition === 0) {
-                        label = p.max(parseInt((this.positions[i]/fullScreenWidth) * props.chromosomeMaxPosition[selectedChromosome]), props.chromosomeMinPosition[selectedChromosome]);
+                        label = p.max(parseInt((this.positions[i]/fullScreenWidth) * props.chromosomeMaxPosition[props.selectedChromosome]), props.chromosomeMinPosition[props.selectedChromosome]);
                     }
                     else {
-                        label = parseInt((this.positions[i]/fullScreenWidth) * props.chromosomeMaxPosition[selectedChromosome]);
+                        label = parseInt((this.positions[i]/fullScreenWidth) * props.chromosomeMaxPosition[props.selectedChromosome]);
                     }
         
                     // determine amount have to shift text labels so they're visible
