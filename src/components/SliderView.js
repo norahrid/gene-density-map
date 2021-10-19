@@ -5,8 +5,6 @@ import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight,
 
 const SliderView = props => {
 
-    console.log("chromo in slider view ", props.selectedGenes);
-
     const containerRef = useRef();
 
     //console.log('selected ', props.selectedGenes);
@@ -47,8 +45,8 @@ const SliderView = props => {
             ); 
         }
 
-        p.mouseReleased = () => {
-            //p.print(p.mouseY);
+        p.mousePressed = () => {
+            p.print(p.mouseY);
             if (p.mouseY >= baseline && p.mouseY <= baseline + geneHeight) {
                 clickedGenes = [];
                 ptr.setClicked(p.mouseX);
@@ -59,11 +57,12 @@ const SliderView = props => {
                         clickedGenes.push(props.selectedGenes[j]);
                     }  
                 }
-            }
-            // p.print(clickedGenes);
-            props.thirdViewToParent(clickedGenes);
+     
+                // p.print(clickedGenes);
+                props.thirdViewToParent(clickedGenes);
 
-            p.redraw();
+                p.redraw();
+            }
             //return false;
         }
 

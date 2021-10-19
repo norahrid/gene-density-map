@@ -5,6 +5,8 @@ import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight,
 
 const ClickView = props => {
 
+    console.log("clicked genes ", props.clickedGenes);
+
     const containerRef = useRef();
 
     const Sketch = p => {
@@ -33,16 +35,18 @@ const ClickView = props => {
         }
 
         p.doubleClicked = () => {
+            
             if (p.mouseY >= baseline && p.mouseY <= baseline + geneHeight) {
-
+                
                 if (typeof props.clickedGenes !== 'undefined') {
+                    
                     for (let i=0; i<props.clickedGenes.length; i++) {
                         // Move all selected genes to the left by the smallest start position + scale by 1000
                         var start = (props.clickedGenes[i].start - (minPos - 0.15)) * 1000;
                         var width = (props.clickedGenes[i].end - props.clickedGenes[i].start) * 1000;
                         if (p.mouseX >= start && p.mouseX <= start + width) {
                             // if gene is selected with a double click, record it
-                            doubleClickedGene = clickedGenes[i];
+                            doubleClickedGene = props.clickedGenes[i];
                         }
                     }
                 }
@@ -55,7 +59,7 @@ const ClickView = props => {
 
             var cGenes;
 
-            p.print("GENES", props.clickedGenes);
+            //p.print("GENES", props.clickedGenes);
 
             if (typeof props.clickedGenes === 'undefined') cGenes = [];
             else cGenes = props.clickedGenes;
@@ -118,7 +122,7 @@ const ClickView = props => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
 
         return () => inst.remove();
-    }, [props.clickedGenes]);
+    }, [props.clickedGenes, props.selectedChromosome]);
 
     return (
         <div ref={containerRef}></div>
