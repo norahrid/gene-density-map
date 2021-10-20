@@ -71,6 +71,7 @@ const AllChromosomes = props => {
                     if (p.mouseX >= componentWidth*i && p.mouseX <= componentWidth*(i+1)) {
                         var selectedChromosome = "at" + (i+1);
                         props.firstViewToParent(selectedChromosome);
+                        props.thirdViewToParentPtr({'thirdViewClicked': false, 'xPos': null});
                     }
                 }
             }

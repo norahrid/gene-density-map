@@ -5,7 +5,7 @@ import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight,
 
 const ClickView = props => {
 
-    console.log("clicked genes ", props.clickedGenes);
+    //console.log("clicked genes ", props.clickedGenes);
 
     const containerRef = useRef();
 
@@ -54,6 +54,8 @@ const ClickView = props => {
             }
         }
 
+
+
         function drawFourthView() {
             pg4.background(240);
 
@@ -98,6 +100,7 @@ const ClickView = props => {
 
                         pg4.line(start, baseline+geneHeight+5, start, baseline+geneHeight+(baseline-10));
                         pg4.line(start+width, baseline+geneHeight+5, start+width, baseline+geneHeight+(baseline-10));
+                        pg4.line(0, baseline+geneHeight+10, fullScreenWidth + 10, baseline+geneHeight+10);
         
                         // get the colour of the currently selected chromosome
                         var colKey = chromosomeColours[props.selectedChromosome];

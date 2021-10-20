@@ -56,6 +56,7 @@ const SingleChromosome = props => {
                 // mouseX and mouseY are on the og canvas, so have to add in the img's top Y coord
                 if (p.mouseY <= (slider.top + slider.height) + baseline && p.mouseY >= slider.top + baseline) {
                     slider.setSelected();
+                    props.thirdViewToParentPtr({'thirdViewClicked': false, 'xPos': null});
                 }
             }
             p.redraw();

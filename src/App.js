@@ -11,6 +11,7 @@ function App() {
   const [sliderPosition, setSliderPosition] = useState(25);
   const [selectedGenes, setSelectedGenes] = useState([]);
   const [clickedGenes, setClickedGenes] = useState([]);
+  const [pointer, setPointer] = useState({'thirdViewClicked': false, 'xPos': null})
 
   // For passing info from child to parent
   const firstViewToParent = (selection) => {
@@ -27,6 +28,10 @@ function App() {
   
   const thirdViewToParent = (geneList) => {
     setClickedGenes(geneList);
+  }
+
+  const thirdViewToParentPtr = (ptrObj) => {
+    setPointer(ptrObj);
   }
 
   // Calculating constants that most of the components use
@@ -85,6 +90,7 @@ function App() {
         genes={GENES}
         chromosomeMaxPosition={maxChromosomePosition}
         firstViewToParent={firstViewToParent}
+        thirdViewToParentPtr={thirdViewToParentPtr}
       />
       <SingleChromosome
         genes={GENES}
@@ -94,6 +100,7 @@ function App() {
         sliderPosition={sliderPosition}
         secondViewToParentSlider={secondViewToParentSlider}
         secondViewToParentGenes={secondViewToParentGenes}
+        thirdViewToParentPtr={thirdViewToParentPtr}
       />
       <SliderView
         genes={GENES}
@@ -102,6 +109,8 @@ function App() {
         sliderPosition={sliderPosition}
         selectedGenes={selectedGenes}
         thirdViewToParent={thirdViewToParent}
+        thirdViewToParentPtr={thirdViewToParentPtr}
+        pointer={pointer}
       />
       <ClickView
         genes={GENES}
