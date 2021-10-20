@@ -91,6 +91,7 @@ function App() {
         chromosomeMaxPosition={maxChromosomePosition}
         firstViewToParent={firstViewToParent}
         thirdViewToParentPtr={thirdViewToParentPtr}
+        thirdViewToParent={thirdViewToParent}
       />
       <SingleChromosome
         genes={GENES}
@@ -101,6 +102,7 @@ function App() {
         secondViewToParentSlider={secondViewToParentSlider}
         secondViewToParentGenes={secondViewToParentGenes}
         thirdViewToParentPtr={thirdViewToParentPtr}
+        thirdViewToParent={thirdViewToParent}
       />
       <SliderView
         genes={GENES}

@@ -72,6 +72,7 @@ const AllChromosomes = props => {
                         var selectedChromosome = "at" + (i+1);
                         props.firstViewToParent(selectedChromosome);
                         props.thirdViewToParentPtr({'thirdViewClicked': false, 'xPos': null});
+                        props.thirdViewToParent([]);
                     }
                 }
             }

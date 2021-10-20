@@ -57,6 +57,7 @@ const SingleChromosome = props => {
                 if (p.mouseY <= (slider.top + slider.height) + baseline && p.mouseY >= slider.top + baseline) {
                     slider.setSelected();
                     props.thirdViewToParentPtr({'thirdViewClicked': false, 'xPos': null});
+                    props.thirdViewToParent([]);
                 }
             }
             p.redraw();
