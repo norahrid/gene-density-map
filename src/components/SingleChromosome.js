@@ -121,6 +121,7 @@ const SingleChromosome = props => {
             //p.print('selected chromo: ', selectedChromosome);
             for (let i=0; i<genes.length; i++) {
                 if (genes[i].chromosomeId === props.selectedChromosome) {
+                    //p.print(genes[i]);
                     var start = getStartCoord(genes[i], fullScreenWidth);
                     var end = start + getWidth(genes[i], fullScreenWidth);
                     slider.determineSelected(genes[i].geneId, start, end);

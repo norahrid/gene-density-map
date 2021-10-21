@@ -3,7 +3,7 @@ import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
     backgroundColour,baseline, backgroundTextColour, sliderWidth } from "../Constants";
 import { drawScaleLine } from "./ScaleLine";
-import { maxChromosomePosition } from "../CalculateMinMaxPosition";
+import { maxChromosomePosition, minChromosomePosition } from "../CalculateMinMaxPosition";
 
 const SliderView = props => {
 
@@ -56,7 +56,7 @@ const SliderView = props => {
         }
 
         p.mouseMoved = () => {
-            if (p.mouseX >= 10) {
+            //if (p.mouseX >= 10) {
 
                 drawThirdView(
                     backgroundColour, 
@@ -66,7 +66,15 @@ const SliderView = props => {
                     alphaNum
                 ); 
 
-                var x = parseInt((((p.mouseX-(margin/2))+props.sliderPosition)/fullScreenWidth) * maxChromosomePosition[props.selectedChromosome]);
+                //var x = parseInt((((p.mouseX-(margin/2))+props.sliderPosition)/fullScreenWidth) * maxChromosomePosition[props.selectedChromosome]);
+                
+                var x = (((p.mouseX-(margin/2))/fullScreenWidth) * 75) + props.sliderPosition;
+                var y = parseInt((x/fullScreenWidth)*maxChromosomePosition[props.selectedChromosome]);
+
+                //p.print('converted x ', x);
+                // p.print('width ', fullScreenWidth);
+                // p.print('slider ', props.sliderPosition);
+                // var x = parseInt((((p.mouseX-(margin/2)) - props.sliderPosition)/sliderWidth) * fullScreenWidth) + minChromosomePosition[props.selectedChromosome];
                 
                 
                 p.strokeWeight(1);
@@ -76,8 +84,8 @@ const SliderView = props => {
                 // draw tooltip to show mouse position
                 p.rect(p.mouseX, p.mouseY, 75, 25);
                 p.fill(backgroundTextColour);
-                p.text(x, p.mouseX + 15, p.mouseY + 15);
-            }
+                p.text(y, p.mouseX + 15, p.mouseY + 15);
+            //}
         }
 
         function drawThirdView(bgCol, colours, gHeight, margin, alphaWeight) {
