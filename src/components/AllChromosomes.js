@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
-    backgroundColour,baseline, chromosomeNumber, backgroundTextColour } from "../constants";
+    backgroundColour,baseline, chromosomeNumber, backgroundTextColour } from "../Constants";
+import { getStartCoord, getWidth } from "../CalculatePosition";
+import { genes } from "../FormatGeneData";
 
 const AllChromosomes = props => {
-
 
     const containerRef = useRef();
 
@@ -39,10 +40,10 @@ const AllChromosomes = props => {
             }
 
 
-            for (let i=0; i<props.genes.length; i++) {
+            for (let i=0; i<genes.length; i++) {
                 // buffers are stored to correspond to the chromosome id (formatted as at#)
-                var index = parseInt(props.genes[i].chromosomeId.slice(-1)) - 1;
-                display(props.genes[i], 
+                var index = parseInt(genes[i].chromosomeId.slice(-1)) - 1;
+                display(genes[i], 
                     graphics[index], 
                     componentWidth, 
                     geneHeight, 
@@ -76,14 +77,6 @@ const AllChromosomes = props => {
                     }
                 }
             }
-        }
-
-        function getStartCoord(gene, w) {
-            return (gene.geneStart/props.chromosomeMaxPosition[gene.chromosomeId]) * w;
-        }
-    
-        function getWidth(gene, w) {
-            return ((gene.geneEnd - gene.geneStart)/props.chromosomeMaxPosition[gene.chromosomeId]) * w;
         }
     
         function display(gene, buffer, w, gHeight, colours, alphaWeight) {

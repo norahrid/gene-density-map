@@ -1,11 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
-    backgroundColour,baseline, backgroundTextColour } from "../constants";
+    backgroundColour,baseline, backgroundTextColour } from "../Constants";
+import gffInfo from "../gffOutput.json";
 
 const ClickView = props => {
-
-    //console.log("clicked genes ", props.clickedGenes);
 
     const containerRef = useRef();
 
@@ -13,7 +12,6 @@ const ClickView = props => {
 
         var fullScreenWidth;
 
-        var clickedGenes = [];
         var doubleClickedGene;
         var minPos;
         var pg4;
@@ -54,14 +52,10 @@ const ClickView = props => {
             }
         }
 
-
-
         function drawFourthView() {
             pg4.background(240);
 
             var cGenes;
-
-            //p.print("GENES", props.clickedGenes);
 
             if (typeof props.clickedGenes === 'undefined') cGenes = [];
             else cGenes = props.clickedGenes;
@@ -69,8 +63,8 @@ const ClickView = props => {
             // No genes selected -- prompt for a click
             if (cGenes.length === 0) {
                 pg4.fill(backgroundTextColour);
-                pg4.textAlign(p.CENTER, p.BOTTOM);
-                pg4.text("Click on a subregion to select genes", (fullScreenWidth)/2, componentHeight);
+                pg4.textAlign(p.CENTER);
+                pg4.text("Click on a subregion to select genes", (fullScreenWidth)/2, componentHeight/3);
             }
         
             else {
@@ -95,8 +89,8 @@ const ClickView = props => {
                         // display selected gene's id, og start and end
                         pg4.text("Selected gene: " + doubleClickedGene.id, 10, baseline);
 
-                        pg4.text(props.gffInfo[doubleClickedGene.id].start, start-40, (baseline*2)+geneHeight);
-                        pg4.text(props.gffInfo[doubleClickedGene.id].end, start+width, (baseline*2)+geneHeight);
+                        pg4.text(gffInfo[doubleClickedGene.id].start, start-40, (baseline*2)+geneHeight);
+                        pg4.text(gffInfo[doubleClickedGene.id].end, start+width, (baseline*2)+geneHeight);
 
                         pg4.line(start, baseline+geneHeight+5, start, baseline+geneHeight+(baseline-10));
                         pg4.line(start+width, baseline+geneHeight+5, start+width, baseline+geneHeight+(baseline-10));

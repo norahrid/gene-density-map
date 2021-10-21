@@ -1,38 +1,28 @@
 import React, { useEffect, useRef } from "react";
 import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
-    backgroundColour,baseline, backgroundTextColour, sliderWidth } from "../constants";
+    backgroundColour,baseline, backgroundTextColour, sliderWidth } from "../Constants";
+import { drawScaleLine } from "./ScaleLine";
+import { maxChromosomePosition } from "../CalculateMinMaxPosition";
 
 const SliderView = props => {
 
     const containerRef = useRef();
 
-    //console.log('selected ', props.selectedGenes);
-
     const Sketch = p => {
 
         var fullScreenWidth;
-        // var selectedChromosome;
         var pg3;
-        //var ptr;
         var clickedGenes;
         
         p.setup = () => {
             p.createCanvas(p.windowWidth, componentHeight);
             fullScreenWidth = p.windowWidth - margin;
 
-            //p.print(fullScreenWidth);
-            //p.print(props.chromosomeMaxPosition[props.selectedChromosome]);
-
-            //ptr = new Pointer();
-
             p.noLoop();
         }
 
         p.draw = () => {
-
-            // if (props.selectedChromosome === "") selectedChromosome = "at1";
-            // else selectedChromosome = props.selectedChromosome;
 
             p.background(backgroundColour);
 
@@ -52,7 +42,6 @@ const SliderView = props => {
             p.print(p.mouseY);
             if (p.mouseY >= baseline && p.mouseY <= baseline + geneHeight) {
                 clickedGenes = [];
-                //ptr.setClicked(p.mouseX);
                 props.thirdViewToParentPtr({'thirdViewClicked': true, 'xPos': p.mouseX})
                 
                 var convertedX = ((p.mouseX/fullScreenWidth) * 75) + props.sliderPosition;
@@ -61,21 +50,12 @@ const SliderView = props => {
                         clickedGenes.push(props.selectedGenes[j]);
                     }  
                 }
-     
-                // p.print(clickedGenes);
                 props.thirdViewToParent(clickedGenes);
-
                 p.redraw();
             }
-            //return false;
         }
 
         p.mouseMoved = () => {
-
-
-
-            //p.redraw();
-
             if (p.mouseX >= 10) {
 
                 drawThirdView(
@@ -86,26 +66,21 @@ const SliderView = props => {
                     alphaNum
                 ); 
 
-                var x = parseInt((((p.mouseX-(margin/2))+props.sliderPosition)/fullScreenWidth) * props.chromosomeMaxPosition[props.selectedChromosome]);
-            
+                var x = parseInt((((p.mouseX-(margin/2))+props.sliderPosition)/fullScreenWidth) * maxChromosomePosition[props.selectedChromosome]);
+                
+                
                 p.strokeWeight(1);
                 p.stroke(backgroundTextColour);
                 p.fill(255);
-                //p.print(p.mouseX);
+       
+                // draw tooltip to show mouse position
                 p.rect(p.mouseX, p.mouseY, 75, 25);
                 p.fill(backgroundTextColour);
                 p.text(x, p.mouseX + 15, p.mouseY + 15);
-
             }
-
-
-            //p.redraw();
         }
 
         function drawThirdView(bgCol, colours, gHeight, margin, alphaWeight) {
-            // if (props.selectedChromosome === "") selectedChromosome = "at1";
-            // else selectedChromosome = props.selectedChromosome;
-
             pg3.background(bgCol);
             
             pg3.strokeWeight(0);
@@ -113,8 +88,6 @@ const SliderView = props => {
             pg3.fill(colKey["r"], colKey["g"], colKey["b"], alphaWeight);
     
             for (let i=0; i<props.selectedGenes.length; i++) {
-                //p.print(props.selectedGenes[i].start);
-                // shift all affected genes back by the slider's left position -- puts the slider's left value at 0
                 var s = (props.selectedGenes[i].start - props.sliderPosition)/75;
                 var width = (props.selectedGenes[i].end - props.selectedGenes[i].start)/75;
                 pg3.rect(s*fullScreenWidth, baseline, width*fullScreenWidth, gHeight);
@@ -123,124 +96,21 @@ const SliderView = props => {
             pg3.fill(backgroundTextColour);
             pg3.textSize(12);
             pg3.text("Subregion: " + props.selectedChromosome, margin, baseline-10);
-    
 
-            var v3Scale = new ScaleLine([props.sliderPosition, props.sliderPosition+sliderWidth], pg3);
-            v3Scale.display(geneHeight + (2*baseline));
+            var intervals = [props.sliderPosition, props.sliderPosition+sliderWidth];
+            drawScaleLine("v3", pg3, intervals, props.sliderPosition, geneHeight+(2*baseline), props.selectedChromosome, fullScreenWidth);
 
-            
-
-            // pg3.fill(255, 0, 0);
-            // pg3.rect(50, 50, 15, 15);
-    
             p.image(pg3, margin/2, 0);
 
+            // draw pointer to indicate the spot that was last clicked
             p.strokeWeight(0);
             p.fill(backgroundTextColour);
-
             p.triangle(
                 props.pointer.xPos, geneHeight + baseline, 
                 props.pointer.xPos-5, geneHeight + baseline + 15, 
                 props.pointer.xPos+5, geneHeight + baseline + 15
             );
-
         }
-
-        class ScaleLine {
-            constructor(intervals, buffer) {
-                this.positions = intervals;
-                this.buffer = buffer;
-            }
-        
-            display(topPos) {
-
-                // if (props.selectedChromosome === "") selectedChromosome = "at1";
-                // else selectedChromosome = props.selectedChromosome;
-        
-                // styling
-                pg3.stroke(backgroundTextColour);
-                pg3.strokeWeight(1);
-                pg3.textSize(10);
-                pg3.fill(backgroundTextColour);
-
-                var yPos = topPos;
-        
-                var shiftAmt;
-                var actualPos;
-                var label;
-        
-                for (let i=0; i<this.positions.length; i++) {
-                    //if (customPos) {
-                    actualPos = ((this.positions[i] - props.sliderPosition) / sliderWidth ) * fullScreenWidth;
-
-                    //p.print('pos ', this.positions[i]);
-    
-                    // TODO: temp fix-- find a better way
-                    if (props.sliderPosition === 0) {
-                        label = p.max(parseInt((this.positions[i]/fullScreenWidth) * props.chromosomeMaxPosition[props.selectedChromosome]), props.chromosomeMinPosition[props.selectedChromosome]);
-                    }
-                    else {
-                        label = parseInt((this.positions[i]/fullScreenWidth) * props.chromosomeMaxPosition[props.selectedChromosome]);
-                    }
-        
-                    // determine amount have to shift text labels so they're visible
-                    if (i === this.positions.length-1) {
-                        shiftAmt = -47;
-                    }
-                    else {
-                        shiftAmt = 0;
-                    }
-                    pg3.line(actualPos, yPos - 20, actualPos, yPos - 10);
-                    pg3.text(label, actualPos + shiftAmt, yPos);
-                }
-                pg3.line(0, yPos-15, fullScreenWidth + 10, yPos-15);
-            }
-        }
-
-        // class Pointer {
-        //     constructor() {
-        //         this.thirdViewClicked = false;
-        //         this.xPos = null;
-        //     }
-        
-        //     setClicked(x) {
-        //         this.thirdViewClicked = true;
-        //         //p.print('x pos ', x);
-        //         if (x !== null) {
-        //             this.xPos = x;
-        //         }
-                
-        //     }
-        
-        //     unsetClicked() {
-        //         this.thirdViewClicked = false;
-        //         this.xPos = null;
-        //     }
-        
-        //     display() {
-        //         p.print(this.thirdViewClicked);
-        //         //if (this.thirdViewClicked) {
-        //             p.strokeWeight(0);
-        //             p.fill(backgroundTextColour);
-        //             // p.print(this.xPos, geneHeight + baseline)
-        //             // p.print(this.xPos-5, geneHeight + baseline + 15);
-        //             // p.print(this.xPos-5, geneHeight + baseline + 15);
-
-        //             p.print('x pos ', this.xPos);
-    
-        //             p.triangle(
-        //                 this.xPos, geneHeight + baseline, 
-        //                 this.xPos-5, geneHeight + baseline + 15, 
-        //                 this.xPos+5, geneHeight + baseline + 15
-        //             );
-
-                    
-
-        //             // p.fill(255, 0, 0);
-        //             // p.rect(50, 50, 15, 15);
-        //         //}
-        //     }
-        // }    
     }
 
     useEffect(() => {
