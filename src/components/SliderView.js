@@ -3,7 +3,7 @@ import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
     backgroundColour,baseline, backgroundTextColour, sliderWidth } from "../Constants";
 import { drawScaleLine } from "./ScaleLine";
-import { maxChromosomePosition, minChromosomePosition } from "../CalculateMinMaxPosition";
+import { maxChromosomePosition } from "../CalculateMinMaxPosition";
 
 const SliderView = props => {
 
@@ -56,6 +56,7 @@ const SliderView = props => {
         }
 
         p.mouseMoved = () => {
+            // only show the coords of genes that are under the slider
             if (p.mouseX >= margin/2 && p.mouseX <= fullScreenWidth + (margin/2)) {
 
                 p.background(backgroundColour);
@@ -67,17 +68,10 @@ const SliderView = props => {
                     margin, 
                     alphaNum
                 ); 
-
-                //var x = parseInt((((p.mouseX-(margin/2))+props.sliderPosition)/fullScreenWidth) * maxChromosomePosition[props.selectedChromosome]);
                 
                 var x = (((p.mouseX-(margin/2))/fullScreenWidth) * 75) + props.sliderPosition;
                 var y = parseInt((x/fullScreenWidth)*maxChromosomePosition[props.selectedChromosome]);
 
-                //p.print('converted x ', x);
-                // p.print('width ', fullScreenWidth);
-                // p.print('slider ', props.sliderPosition);
-                // var x = parseInt((((p.mouseX-(margin/2)) - props.sliderPosition)/sliderWidth) * fullScreenWidth) + minChromosomePosition[props.selectedChromosome];
-                
                 
                 p.strokeWeight(1);
                 p.stroke(backgroundTextColour);
