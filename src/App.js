@@ -3,6 +3,8 @@ import AllChromosomes from "./components/AllChromosomes";
 import ClickView from './components/ClickView';
 import SingleChromosome from "./components/SingleChromosome";
 import SliderView from "./components/SliderView";
+import axios from 'axios';
+import _ from 'lodash';
 
 function App() {
 
@@ -32,6 +34,11 @@ function App() {
   const thirdViewToParentPtr = (ptrObj) => {
     setPointer(ptrObj);
   }
+
+  // axios.get('data.gff3')
+  //           .then((response) => { 
+  //             console.log(_);
+  //             debugger; })
 
   return (
     <div className="App">

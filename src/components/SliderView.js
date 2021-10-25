@@ -39,7 +39,7 @@ const SliderView = props => {
         }
 
         p.mousePressed = () => {
-            p.print(p.mouseY);
+            //p.print(p.mouseY);
             if (p.mouseY >= baseline && p.mouseY <= baseline + geneHeight) {
                 clickedGenes = [];
                 props.thirdViewToParentPtr({'thirdViewClicked': true, 'xPos': p.mouseX})
@@ -56,7 +56,9 @@ const SliderView = props => {
         }
 
         p.mouseMoved = () => {
-            //if (p.mouseX >= 10) {
+            if (p.mouseX >= margin/2 && p.mouseX <= fullScreenWidth + (margin/2)) {
+
+                p.background(backgroundColour);
 
                 drawThirdView(
                     backgroundColour, 
@@ -80,12 +82,21 @@ const SliderView = props => {
                 p.strokeWeight(1);
                 p.stroke(backgroundTextColour);
                 p.fill(255);
+
+                var pos;
+
+                if (p.mouseX >= fullScreenWidth-75) {
+                    pos = p.mouseX - 75;
+                }
+                else {
+                    pos = p.mouseX;
+                }
        
                 // draw tooltip to show mouse position
-                p.rect(p.mouseX, p.mouseY, 75, 25);
+                p.rect(pos, p.mouseY, 75, 25);
                 p.fill(backgroundTextColour);
-                p.text(y, p.mouseX + 15, p.mouseY + 15);
-            //}
+                p.text(y, pos + 15, p.mouseY + 15);
+            }
         }
 
         function drawThirdView(bgCol, colours, gHeight, margin, alphaWeight) {
