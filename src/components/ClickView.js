@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
     backgroundColour,baseline, backgroundTextColour } from "../constants";
-import gffInfo from "../gffOutput.json";
+import gffInfo from "../assets/gffOutput_arabodopsis.json";
 
 const ClickView = props => {
 

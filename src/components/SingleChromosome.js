@@ -4,7 +4,6 @@ import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight,
     backgroundColour, baseline, backgroundTextColour } from "../constants";
 import { drawScaleLine } from "./ScaleLine";
 import { getStartCoord, getWidth } from "../CalculatePosition";
-import { genes } from "../FormatGeneData";
 import { maxChromosomePosition, minChromosomePosition } from "../CalculateMinMaxPosition";
 
 const SingleChromosome = props => {
@@ -36,7 +35,7 @@ const SingleChromosome = props => {
             pg2 = p.createGraphics(fullScreenWidth, componentHeight);
 
             // 2nd view
-            drawSecondView(genes, 
+            drawSecondView(props.genes, 
                 backgroundColour, 
                 geneHeight, 
                 chromosomeColours, 
@@ -119,12 +118,12 @@ const SingleChromosome = props => {
 
         function selectGenes() {
             //p.print('selected chromo: ', selectedChromosome);
-            for (let i=0; i<genes.length; i++) {
-                if (genes[i].chromosomeId === props.selectedChromosome) {
+            for (let i=0; i<props.genes.length; i++) {
+                if (props.genes[i].chromosomeId === props.selectedChromosome) {
                     //p.print(genes[i]);
-                    var start = getStartCoord(genes[i], fullScreenWidth);
-                    var end = start + getWidth(genes[i], fullScreenWidth);
-                    slider.determineSelected(genes[i].geneId, start, end);
+                    var start = getStartCoord(props.genes[i], fullScreenWidth);
+                    var end = start + getWidth(props.genes[i], fullScreenWidth);
+                    slider.determineSelected(props.genes[i].geneId, start, end);
                 }
             }
         }

@@ -23,3 +23,9 @@ export const baseline = 25;
 export const chromosomeNumber = 5;
 
 export const backgroundTextColour = 169;
+
+export const genomes = {
+  ARABIDOPSIS: { id: 1, name: 'Arabidopsis', val: 'ARABIDOPSIS' },
+  LENS_CULINARIS: { id: 2, name: 'Lens culinaris', val: 'LENS_CULINARIS'},
+  LENS_ERVOIDES: { id: 3, name: 'Lens ervoides', val: 'LENS_ERVOIDES'}
+}

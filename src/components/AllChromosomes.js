@@ -3,7 +3,6 @@ import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
     backgroundColour,baseline, chromosomeNumber, backgroundTextColour } from "../constants";
 import { getStartCoord, getWidth } from "../CalculatePosition";
-import { genes } from "../FormatGeneData";
 
 const AllChromosomes = props => {
 
@@ -40,10 +39,10 @@ const AllChromosomes = props => {
             }
 
 
-            for (let i=0; i<genes.length; i++) {
+            for (let i=0; i<props.genes.length; i++) {
                 // buffers are stored to correspond to the chromosome id (formatted as at#)
-                var index = parseInt(genes[i].chromosomeId.slice(-1)) - 1;
-                display(genes[i], 
+                var index = parseInt(props.genes[i].chromosomeId.slice(-1)) - 1;
+                display(props.genes[i], 
                     graphics[index], 
                     componentWidth, 
                     geneHeight, 

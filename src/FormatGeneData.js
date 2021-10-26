@@ -1,16 +1,17 @@
-import data from "./gffOutput.json";
+export const formatGeneData = (data) => {
+  const genes = [];
 
-const genes = [];
-
-for (var key in data) {
-  // make an array of all of the genes
-  var gene = {
-    "chromosomeId": data[key]["chromosomeId"],
-    "geneId": key,
-    "geneStart": data[key]["start"],
-    "geneEnd": data[key]["end"]
+  for (var key in data) {
+    // make an array of all of the genes
+    var gene = {
+      "chromosomeId": data[key]["chromosomeId"],
+      "geneId": key,
+      "geneStart": data[key]["start"],
+      "geneEnd": data[key]["end"]
+    }
+    genes.push(gene);
   }
-  genes.push(gene);
-}
 
-export { genes };
+  return genes;
+
+}

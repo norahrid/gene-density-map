@@ -3,6 +3,8 @@ import AllChromosomes from "./components/AllChromosomes";
 import ClickView from './components/ClickView';
 import SingleChromosome from "./components/SingleChromosome";
 import SliderView from "./components/SliderView";
+import { formatGeneData } from './FormatGeneData';
+import data from './assets/gffOutput_arabodopsis.json';
 import axios from 'axios';
 import _ from 'lodash';
 
@@ -35,6 +37,8 @@ function App() {
     setPointer(ptrObj);
   }
 
+  const genes = formatGeneData(data);
+
   // axios.get('data.gff3')
   //           .then((response) => { 
   //             console.log(_);
@@ -43,11 +47,13 @@ function App() {
   return (
     <div className="App">
       <AllChromosomes
+        genes={genes}
         firstViewToParent={firstViewToParent}
         thirdViewToParentPtr={thirdViewToParentPtr}
         thirdViewToParent={thirdViewToParent}
       />
       <SingleChromosome
+        genes={genes}
         selectedChromosome={selectedChromosome}
         sliderPosition={sliderPosition}
         secondViewToParentSlider={secondViewToParentSlider}
