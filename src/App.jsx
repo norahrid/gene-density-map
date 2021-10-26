@@ -3,7 +3,7 @@ import AllChromosomes from "./components/AllChromosomes";
 import ClickView from './components/ClickView';
 import SingleChromosome from "./components/SingleChromosome";
 import SliderView from "./components/SliderView";
-import { formatGeneData } from './FormatGeneData';
+import { formatGeneData } from './helpers/FormatGeneData';
 import data from './assets/gffOutput_arabodopsis.json';
 import axios from 'axios';
 import _ from 'lodash';

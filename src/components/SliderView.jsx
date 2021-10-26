@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from "react";
 import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
     backgroundColour,baseline, backgroundTextColour, sliderWidth } from "../constants";
-import { drawScaleLine } from "./ScaleLine";
-import { maxChromosomePosition } from "../CalculateMinMaxPosition";
+import { drawScaleLine } from "../helpers/ScaleLine";
+import { maxChromosomePosition } from "../helpers/CalculateMinMaxPosition";
 
 const SliderView = props => {
 

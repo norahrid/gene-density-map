@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from "react";
 import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
     backgroundColour, baseline, backgroundTextColour } from "../constants";
-import { drawScaleLine } from "./ScaleLine";
-import { getStartCoord, getWidth } from "../CalculatePosition";
-import { maxChromosomePosition, minChromosomePosition } from "../CalculateMinMaxPosition";
+import { drawScaleLine } from "../helpers/ScaleLine";
+import { getStartCoord, getWidth } from "../helpers/CalculatePosition";
+import { maxChromosomePosition, minChromosomePosition } from "../helpers/CalculateMinMaxPosition";
 
 const SingleChromosome = props => {
 

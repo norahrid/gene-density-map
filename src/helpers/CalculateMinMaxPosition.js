@@ -1,4 +1,4 @@
-import data from "./assets/gffOutput_arabodopsis.json";
+import data from "../assets/gffOutput_arabodopsis.json";
 
 // Calculating constants that most of the components use
 const findMinMaxPosition = (geneData, chromoId, isMax) => {
