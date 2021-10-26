@@ -1,4 +1,4 @@
-import { sliderWidth, backgroundTextColour} from "../Constants";
+import { sliderWidth, backgroundTextColour} from "../constants";
 import { maxChromosomePosition, minChromosomePosition } from "../CalculateMinMaxPosition";
 
 export const drawScaleLine = (viewName, buffer, intervals, sliderPosition, yPos, selectedChromosome, fullScreenWidth) => {

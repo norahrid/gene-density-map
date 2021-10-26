@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
-    backgroundColour,baseline, backgroundTextColour, sliderWidth } from "../Constants";
+    backgroundColour,baseline, backgroundTextColour, sliderWidth } from "../constants";
 import { drawScaleLine } from "./ScaleLine";
 import { maxChromosomePosition } from "../CalculateMinMaxPosition";
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
-    backgroundColour,baseline, backgroundTextColour } from "../Constants";
+    backgroundColour,baseline, backgroundTextColour } from "../constants";
 import gffInfo from "../gffOutput.json";
 
 const ClickView = props => {

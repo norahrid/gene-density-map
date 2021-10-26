@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
-    backgroundColour,baseline, chromosomeNumber, backgroundTextColour } from "../Constants";
+    backgroundColour,baseline, chromosomeNumber, backgroundTextColour } from "../constants";
 import { getStartCoord, getWidth } from "../CalculatePosition";
 import { genes } from "../FormatGeneData";
 
