@@ -21,6 +21,8 @@ const AllChromosomes = props => {
             componentWidth = fullScreenWidth/chromosomeNumber;
 
             p.noLoop();
+
+            //p.print(props.genes.length);
         }
 
         p.draw = () => {
@@ -69,10 +71,12 @@ const AllChromosomes = props => {
             if (p.mouseY >= baseline*2 && p.mouseY <= (baseline*2) + geneHeight) {
                 for (let i=0; i<=chromosomeNumber; i++) {
                     if (p.mouseX >= componentWidth*i && p.mouseX <= componentWidth*(i+1)) {
-                        var selectedChromosome = "at" + (i+1);
-                        props.firstViewToParent(selectedChromosome);
-                        props.thirdViewToParentPtr({'thirdViewClicked': false, 'xPos': null});
-                        props.thirdViewToParent([]);
+                        if (i <= chromosomeNumber-1) {
+                            var selectedChromosome = "at" + (i+1);
+                            props.firstViewToParent(selectedChromosome);
+                            props.thirdViewToParentPtr({'thirdViewClicked': false, 'xPos': null});
+                            props.thirdViewToParent([]);
+                    }
                     }
                 }
             }

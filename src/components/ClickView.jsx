@@ -101,6 +101,7 @@ const ClickView = props => {
                         pg4.fill(colKey["r"], colKey["g"], colKey["b"], alphaNum);
         
                     }
+                    
                     else {
                         pg4.fill(200);
                     }

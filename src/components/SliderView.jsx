@@ -23,7 +23,6 @@ const SliderView = props => {
         }
 
         p.draw = () => {
-
             p.background(backgroundColour);
 
             // 3rd view to show the genes contained in the slider
@@ -101,6 +100,7 @@ const SliderView = props => {
             pg3.fill(colKey["r"], colKey["g"], colKey["b"], alphaWeight);
     
             for (let i=0; i<props.selectedGenes.length; i++) {
+                //p.print(props.selectedGenes[i]);
                 var s = (props.selectedGenes[i].start - props.sliderPosition)/75;
                 var width = (props.selectedGenes[i].end - props.selectedGenes[i].start)/75;
                 pg3.rect(s*fullScreenWidth, baseline, width*fullScreenWidth, gHeight);

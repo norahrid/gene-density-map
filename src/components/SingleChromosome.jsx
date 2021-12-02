@@ -42,6 +42,8 @@ const SingleChromosome = props => {
                 alphaNum, 
                 margin
             );
+
+            slider.display();
         }
 
         p.mousePressed = () => {
@@ -60,9 +62,12 @@ const SingleChromosome = props => {
 
         p.mouseDragged = () => {
             if (slider.selected === true) {
+                
                 slider.move(p.mouseX);
                 props.secondViewToParentSlider(p.mouseX);
-                p.redraw();
+                //p.redraw();
+                p.image(pg2, margin/2, 0);
+                slider.display();
             }
         }
 
@@ -84,7 +89,7 @@ const SingleChromosome = props => {
             pg2.fill(backgroundTextColour);
             pg2.text("Chromosome: " + props.selectedChromosome, 25, baseline-10);
         
-            slider.display();
+            //slider.display();
 
             var intervals = setIntervals(minChromosomePosition[props.selectedChromosome], maxChromosomePosition[props.selectedChromosome], 7);
             drawScaleLine("v2", pg2, intervals, props.sliderPosition, geneHeight+(2*baseline), props.selectedChromosome, fullScreenWidth);
@@ -140,12 +145,12 @@ const SingleChromosome = props => {
         
             display() {
                 // draw slider
-                pg2.fill(224, 224, 224, 25);
+                p.fill(224, 224, 224, 25);
             
-                pg2.strokeWeight(1);
-                pg2.stroke(0);
+                p.strokeWeight(1);
+                p.stroke(0);
         
-                pg2.rect(this.left, this.top, this.width, this.height);
+                p.rect(this.left, this.top, this.width, this.height);
             }
 
             setSelected() {
@@ -188,9 +193,9 @@ const SingleChromosome = props => {
                 var end = (g.geneEnd - this.left)/this.width;
         
                 
-                if (x >= start && x <= end) {
-                    p.print('hit ', g.geneId, g.geneStart, g.geneEnd);
-                }
+                // if (x >= start && x <= end) {
+                //     p.print('hit ', g.geneId, g.geneStart, g.geneEnd);
+                // }
             }
         }
     }

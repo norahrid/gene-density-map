@@ -7,6 +7,7 @@ import { formatGeneData } from './helpers/FormatGeneData';
 import data from './assets/gffOutput_arabodopsis.json';
 import axios from 'axios';
 import _ from 'lodash';
+import "./App.css"
 
 function App() {
 
@@ -45,13 +46,15 @@ function App() {
   //             debugger; })
 
   return (
-    <div className="App">
+    <div className="App-header">
+      <p>Genome</p>
       <AllChromosomes
         genes={genes}
         firstViewToParent={firstViewToParent}
         thirdViewToParentPtr={thirdViewToParentPtr}
         thirdViewToParent={thirdViewToParent}
       />
+      <p>Chromosome ({selectedChromosome})</p>
       <SingleChromosome
         genes={genes}
         selectedChromosome={selectedChromosome}
@@ -61,6 +64,7 @@ function App() {
         thirdViewToParentPtr={thirdViewToParentPtr}
         thirdViewToParent={thirdViewToParent}
       />
+      <p>Subregion ({selectedChromosome})</p>
       <SliderView
         selectedChromosome={selectedChromosome}
         sliderPosition={sliderPosition}
@@ -69,6 +73,7 @@ function App() {
         thirdViewToParentPtr={thirdViewToParentPtr}
         pointer={pointer}
       />
+      <p>Subregion Selection ({selectedChromosome})</p>
       <ClickView
         selectedChromosome={selectedChromosome}
         clickedGenes={clickedGenes}
