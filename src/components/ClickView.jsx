@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
-    backgroundColour,baseline, backgroundTextColour } from "../constants";
+    backgroundColour,baseline, backgroundTextColour, componentWidth } from "../constants";
 import gffInfo from "../assets/gffOutput_arabodopsis.json";
 
 const ClickView = props => {
@@ -10,15 +10,15 @@ const ClickView = props => {
 
     const Sketch = p => {
 
-        var fullScreenWidth;
+        //var fullScreenWidth;
 
         var doubleClickedGene;
         var minPos;
         var pg4;
 
         p.setup = () => {
-            p.createCanvas(p.windowWidth, componentHeight);
-            fullScreenWidth = p.windowWidth - margin;
+            p.createCanvas(componentWidth, componentHeight);
+            //fullScreenWidth = p.windowWidth - margin;
 
             p.noLoop();
         }
@@ -26,7 +26,7 @@ const ClickView = props => {
         p.draw = () => {
             p.background(backgroundColour);
 
-            pg4 = p.createGraphics(fullScreenWidth, componentHeight + baseline + 10);
+            pg4 = p.createGraphics(componentWidth, componentHeight + baseline + 10);
 
             // fourth view
             drawFourthView();
@@ -64,7 +64,7 @@ const ClickView = props => {
             if (cGenes.length === 0) {
                 pg4.fill(backgroundTextColour);
                 pg4.textAlign(p.CENTER);
-                pg4.text("Click on a subregion to select genes", (fullScreenWidth)/2, componentHeight/3);
+                pg4.text("Click on a subregion to select genes", (componentWidth)/2, componentHeight/3);
             }
         
             else {
@@ -94,7 +94,7 @@ const ClickView = props => {
 
                         pg4.line(start, baseline+geneHeight+5, start, baseline+geneHeight+(baseline-10));
                         pg4.line(start+width, baseline+geneHeight+5, start+width, baseline+geneHeight+(baseline-10));
-                        pg4.line(0, baseline+geneHeight+10, fullScreenWidth + 10, baseline+geneHeight+10);
+                        pg4.line(0, baseline+geneHeight+10, componentWidth + 10, baseline+geneHeight+10);
         
                         // get the colour of the currently selected chromosome
                         var colKey = chromosomeColours[props.selectedChromosome];

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
-    backgroundColour, baseline, backgroundTextColour } from "../constants";
+    backgroundColour, baseline, backgroundTextColour, sliderWidth, componentWidth } from "../constants";
 import { drawScaleLine } from "../helpers/ScaleLine";
 import { getStartCoord, getWidth } from "../helpers/CalculatePosition";
 import { maxChromosomePosition, minChromosomePosition } from "../helpers/CalculateMinMaxPosition";
@@ -12,13 +12,13 @@ const SingleChromosome = props => {
 
     const Sketch = (p) => {
 
-        var fullScreenWidth;
+        //var fullScreenWidth;
         var pg2;
         var slider;
 
         p.setup = () => {
-            p.createCanvas(p.windowWidth, componentHeight);
-            fullScreenWidth = p.windowWidth - margin;
+            p.createCanvas(componentWidth, componentHeight);
+            //fullScreenWidth = p.windowWidth - margin;
 
             slider = new Slider(props.sliderPosition, baseline, geneHeight, geneHeight);
 
@@ -32,7 +32,7 @@ const SingleChromosome = props => {
             props.secondViewToParentGenes(slider.genes);
 
             // second view to show the one selected chromosome
-            pg2 = p.createGraphics(fullScreenWidth, componentHeight);
+            pg2 = p.createGraphics(componentWidth, componentHeight);
 
             // 2nd view
             drawSecondView(props.genes, 
@@ -61,20 +61,32 @@ const SingleChromosome = props => {
         }
 
         p.mouseDragged = () => {
+            p.background(backgroundColour);
             if (slider.selected === true) {
                 
                 slider.move(p.mouseX);
-                props.secondViewToParentSlider(p.mouseX);
+                // props.secondViewToParentSlider(p.mouseX);
                 //p.redraw();
-                p.image(pg2, margin/2, 0);
+                p.image(pg2, 0, 0);
                 slider.display();
             }
         }
 
         p.mouseReleased = () => {
-            // slider is no longer selected
-            slider.unsetSelected();
-            p.redraw();
+
+            if (slider.selected === true) {
+                let val;
+
+                if (p.mouseX < 0) val = 0;
+                else if (p.mouseX >= componentWidth) val = (componentWidth) - sliderWidth;
+                else if (p.mouseX + sliderWidth >= componentWidth) val = componentWidth - sliderWidth;
+                else val = p.mouseX;
+
+                props.secondViewToParentSlider(val);
+                // slider is no longer selected
+                slider.unsetSelected();
+                p.redraw();
+            }
         }
 
         function drawSecondView(genes, bgCol, gHeight, colours, alphaWeight, margin) {
@@ -82,19 +94,19 @@ const SingleChromosome = props => {
 
             for (let i=0; i<genes.length; i++) {
                 if (genes[i].chromosomeId === props.selectedChromosome) {
-                    display(genes[i], pg2, fullScreenWidth, gHeight, colours, alphaWeight);
+                    display(genes[i], pg2, componentWidth, gHeight, colours, alphaWeight);
                 }
             }
         
-            pg2.fill(backgroundTextColour);
-            pg2.text("Chromosome: " + props.selectedChromosome, 25, baseline-10);
+            //pg2.fill(backgroundTextColour);
+            //pg2.text("Chromosome: " + props.selectedChromosome, 25, baseline-10);
         
             //slider.display();
 
             var intervals = setIntervals(minChromosomePosition[props.selectedChromosome], maxChromosomePosition[props.selectedChromosome], 7);
-            drawScaleLine("v2", pg2, intervals, props.sliderPosition, geneHeight+(2*baseline), props.selectedChromosome, fullScreenWidth);
+            drawScaleLine("v2", pg2, intervals, props.sliderPosition, geneHeight+(2*baseline), props.selectedChromosome, componentWidth);
         
-            p.image(pg2, margin/2, 0);
+            p.image(pg2, 0, 0);
         }
 
         function display(gene, buffer, w, gHeight, colours, alphaWeight) {
@@ -126,8 +138,8 @@ const SingleChromosome = props => {
             for (let i=0; i<props.genes.length; i++) {
                 if (props.genes[i].chromosomeId === props.selectedChromosome) {
                     //p.print(genes[i]);
-                    var start = getStartCoord(props.genes[i], fullScreenWidth);
-                    var end = start + getWidth(props.genes[i], fullScreenWidth);
+                    var start = getStartCoord(props.genes[i], componentWidth);
+                    var end = start + getWidth(props.genes[i], componentWidth);
                     slider.determineSelected(props.genes[i].geneId, start, end);
                 }
             }
@@ -165,12 +177,12 @@ const SingleChromosome = props => {
                 var dx = x - this.left;
                 //slider.left += dx;
         
-                if ((this.left + this.width) + dx < fullScreenWidth && this.left + dx >= 0) {
+                if ((this.left + this.width) + dx < componentWidth && this.left + dx >= 0) {
                     this.left += dx;
                 }
                 // prevent the slider from going off the right end
-                else if (this.left + this.width + dx >= fullScreenWidth) {
-                    this.left = (fullScreenWidth - this.width);
+                else if (this.left + this.width + dx >= componentWidth) {
+                    this.left = (componentWidth - this.width);
                 }
                 // prevents slider from going off left end
                 else if (this.left + dx < 0) {

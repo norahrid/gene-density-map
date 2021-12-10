@@ -16,7 +16,7 @@ export const margin = 20;
 
 export const componentWidth = window.innerWidth * 0.95;
 
-export const chunkWidth = (componentWidth/5)-5;
+export const chunkWidth = (componentWidth/5);
 
 export const componentHeight = 135;
 

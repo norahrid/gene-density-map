@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
-    backgroundColour,baseline, backgroundTextColour, sliderWidth } from "../constants";
+    backgroundColour,baseline, backgroundTextColour, sliderWidth, componentWidth } from "../constants";
 import { drawScaleLine } from "../helpers/ScaleLine";
 import { maxChromosomePosition } from "../helpers/CalculateMinMaxPosition";
 
@@ -16,8 +16,8 @@ const SliderView = props => {
         var clickedGenes;
         
         p.setup = () => {
-            p.createCanvas(p.windowWidth, componentHeight);
-            fullScreenWidth = p.windowWidth - margin;
+            p.createCanvas(componentWidth, componentHeight);
+            //fullScreenWidth = p.windowWidth - margin;
 
             p.noLoop();
         }
@@ -26,7 +26,7 @@ const SliderView = props => {
             p.background(backgroundColour);
 
             // 3rd view to show the genes contained in the slider
-            pg3 = p.createGraphics(fullScreenWidth, componentHeight);
+            pg3 = p.createGraphics(componentWidth, componentHeight);
 
             drawThirdView(
                 backgroundColour, 
@@ -43,7 +43,7 @@ const SliderView = props => {
                 clickedGenes = [];
                 props.thirdViewToParentPtr({'thirdViewClicked': true, 'xPos': p.mouseX})
                 
-                var convertedX = ((p.mouseX/fullScreenWidth) * 75) + props.sliderPosition;
+                var convertedX = ((p.mouseX/componentWidth) * 75) + props.sliderPosition;
                 for (let j=0; j<props.selectedGenes.length; j++) {
                     if (convertedX >= props.selectedGenes[j].start - 0.5 && convertedX <= props.selectedGenes[j].end + 0.5) {
                         clickedGenes.push(props.selectedGenes[j]);
@@ -56,7 +56,7 @@ const SliderView = props => {
 
         p.mouseMoved = () => {
             // only show the coords of genes that are under the slider
-            if (p.mouseX >= margin/2 && p.mouseX <= fullScreenWidth + (margin/2)) {
+            if (p.mouseX >= 0 && p.mouseX <= componentWidth) {
 
                 p.background(backgroundColour);
 
@@ -68,8 +68,8 @@ const SliderView = props => {
                     alphaNum
                 ); 
                 
-                var x = (((p.mouseX-(margin/2))/fullScreenWidth) * 75) + props.sliderPosition;
-                var y = parseInt((x/fullScreenWidth)*maxChromosomePosition[props.selectedChromosome]);
+                var x = ((p.mouseX/componentWidth) * 75) + props.sliderPosition;
+                var y = parseInt((x/componentWidth)*maxChromosomePosition[props.selectedChromosome]);
 
                 
                 p.strokeWeight(1);
@@ -78,7 +78,7 @@ const SliderView = props => {
 
                 var pos;
 
-                if (p.mouseX >= fullScreenWidth-75) {
+                if (p.mouseX >= componentWidth-75) {
                     pos = p.mouseX - 75;
                 }
                 else {
@@ -103,17 +103,17 @@ const SliderView = props => {
                 //p.print(props.selectedGenes[i]);
                 var s = (props.selectedGenes[i].start - props.sliderPosition)/75;
                 var width = (props.selectedGenes[i].end - props.selectedGenes[i].start)/75;
-                pg3.rect(s*fullScreenWidth, baseline, width*fullScreenWidth, gHeight);
+                pg3.rect(s*componentWidth, baseline, width*componentWidth, gHeight);
             }
     
-            pg3.fill(backgroundTextColour);
-            pg3.textSize(12);
-            pg3.text("Subregion: " + props.selectedChromosome, margin, baseline-10);
+            //pg3.fill(backgroundTextColour);
+            //pg3.textSize(12);
+            //pg3.text("Subregion: " + props.selectedChromosome, margin, baseline-10);
 
             var intervals = [props.sliderPosition, props.sliderPosition+sliderWidth];
-            drawScaleLine("v3", pg3, intervals, props.sliderPosition, geneHeight+(2*baseline), props.selectedChromosome, fullScreenWidth);
+            drawScaleLine("v3", pg3, intervals, props.sliderPosition, geneHeight+(2*baseline), props.selectedChromosome, componentWidth);
 
-            p.image(pg3, margin/2, 0);
+            p.image(pg3, 0, 0);
 
             // draw pointer to indicate the spot that was last clicked
             p.strokeWeight(0);

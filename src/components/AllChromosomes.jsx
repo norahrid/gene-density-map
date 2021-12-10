@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import p5 from 'p5';
 import { chromosomeColours, geneHeight, alphaNum, margin, componentHeight, 
-    backgroundColour,baseline, chromosomeNumber, backgroundTextColour } from "../constants";
+    backgroundColour,baseline, chromosomeNumber, backgroundTextColour,
+    componentWidth, chunkWidth } from "../constants";
 import { getStartCoord, getWidth } from "../helpers/CalculatePosition";
 
 const AllChromosomes = props => {
@@ -10,15 +11,15 @@ const AllChromosomes = props => {
 
     const Sketch = (p) => {
         var graphics;
-        var fullScreenWidth;
-        var componentWidth;
+        //var fullScreenWidth;
 
         p.setup = () => {
-            p.createCanvas(p.windowWidth, componentHeight);
+            p.createCanvas(componentWidth, componentHeight);
 
-            fullScreenWidth = p.windowWidth - margin;
+            //fullScreenWidth = p.windowWidth - margin;
+            p.print(componentWidth);
 
-            componentWidth = fullScreenWidth/chromosomeNumber;
+            //componentWidth = fullScreenWidth/chromosomeNumber;
 
             p.noLoop();
 
@@ -31,7 +32,7 @@ const AllChromosomes = props => {
             graphics = [];
             // first view to show all the chromosomes on one line
             for (let i=0; i<chromosomeNumber; i++) {
-                var g = p.createGraphics(componentWidth, componentHeight);
+                var g = p.createGraphics(chunkWidth, componentHeight);
                 graphics.push(g);
             }
 
@@ -46,7 +47,7 @@ const AllChromosomes = props => {
                 var index = parseInt(props.genes[i].chromosomeId.slice(-1)) - 1;
                 display(props.genes[i], 
                     graphics[index], 
-                    componentWidth, 
+                    chunkWidth, 
                     geneHeight, 
                     chromosomeColours, 
                     alphaNum
@@ -62,7 +63,7 @@ const AllChromosomes = props => {
 
             // Put the image on the canvas
             for (let i=0; i<graphics.length; i++){
-                p.image(graphics[i], (componentWidth*i) + 10, 0);
+                p.image(graphics[i], (chunkWidth*i), 0);
             }
         }
 
@@ -70,7 +71,7 @@ const AllChromosomes = props => {
             // Only check x coord if y coord is on the chromo map
             if (p.mouseY >= baseline*2 && p.mouseY <= (baseline*2) + geneHeight) {
                 for (let i=0; i<=chromosomeNumber; i++) {
-                    if (p.mouseX >= componentWidth*i && p.mouseX <= componentWidth*(i+1)) {
+                    if (p.mouseX >= chunkWidth*i && p.mouseX <= chunkWidth*(i+1)) {
                         if (i <= chromosomeNumber-1) {
                             var selectedChromosome = "at" + (i+1);
                             props.firstViewToParent(selectedChromosome);
