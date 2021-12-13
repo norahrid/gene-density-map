@@ -57,21 +57,13 @@ const SliderView = props => {
         p.mouseMoved = () => {
             // only show the coords of genes that are under the slider
             if (p.mouseX >= 0 && p.mouseX <= componentWidth) {
-
                 p.background(backgroundColour);
-
-                drawThirdView(
-                    backgroundColour, 
-                    chromosomeColours, 
-                    geneHeight, 
-                    margin, 
-                    alphaNum
-                ); 
+                p.image(pg3, 0, 0);
+                drawPointer();
                 
                 var x = ((p.mouseX/componentWidth) * 75) + props.sliderPosition;
                 var y = parseInt((x/componentWidth)*maxChromosomePosition[props.selectedChromosome]);
 
-                
                 p.strokeWeight(1);
                 p.stroke(backgroundTextColour);
                 p.fill(255);
@@ -114,7 +106,10 @@ const SliderView = props => {
             drawScaleLine("v3", pg3, intervals, props.sliderPosition, geneHeight+(2*baseline), props.selectedChromosome, componentWidth);
 
             p.image(pg3, 0, 0);
+            drawPointer();
+        }
 
+        function drawPointer() {
             // draw pointer to indicate the spot that was last clicked
             p.strokeWeight(0);
             p.fill(backgroundTextColour);
@@ -130,7 +125,7 @@ const SliderView = props => {
         let inst = new p5(Sketch, containerRef.current);
         return () => inst.remove();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.sliderPosition, props.selectedGenes, props.selectedChromosome]);
+    }, [props.sliderPosition, props.selectedGenes, props.selectedChromosome, props.pointer]);
 
     return (
         <div ref={containerRef}></div>
