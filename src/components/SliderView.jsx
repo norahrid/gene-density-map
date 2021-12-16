@@ -53,36 +53,36 @@ const SliderView = props => {
                 p.redraw();
             }
         }
+        // Currently has an error with correctly calculating position
+        // p.mouseMoved = () => {
+        //     // only show the coords of genes that are under the slider
+        //     if (p.mouseX >= 0 && p.mouseX <= componentWidth) {
+        //         p.background(backgroundColour);
+        //         p.image(pg3, 0, 0);
+        //         drawPointer();
 
-        p.mouseMoved = () => {
-            // only show the coords of genes that are under the slider
-            if (p.mouseX >= 0 && p.mouseX <= componentWidth) {
-                p.background(backgroundColour);
-                p.image(pg3, 0, 0);
-                drawPointer();
-                
-                var x = ((p.mouseX/componentWidth) * 75) + props.sliderPosition;
-                var y = parseInt((x/componentWidth)*maxChromosomePosition[props.selectedChromosome]);
+        //         var x = ((p.mouseX/componentWidth) * sliderWidth) + props.sliderPosition;
+        //         var y = parseInt((x/componentWidth)*maxChromosomePosition[props.selectedChromosome]);
 
-                p.strokeWeight(1);
-                p.stroke(backgroundTextColour);
-                p.fill(255);
+        //         p.strokeWeight(1);
+        //         p.stroke(backgroundTextColour);
+        //         p.fill(255);
 
-                var pos;
+        //         var pos;
 
-                if (p.mouseX >= componentWidth-75) {
-                    pos = p.mouseX - 75;
-                }
-                else {
-                    pos = p.mouseX;
-                }
+        //         if (p.mouseX >= componentWidth-75) {
+        //             pos = p.mouseX - 75;
+        //         }
+        //         else {
+        //             pos = p.mouseX;
+        //         }
        
-                // draw tooltip to show mouse position
-                p.rect(pos, p.mouseY, 75, 25);
-                p.fill(backgroundTextColour);
-                p.text(y, pos + 15, p.mouseY + 15);
-            }
-        }
+        //         // draw tooltip to show mouse position
+        //         p.rect(pos, p.mouseY, 75, 25);
+        //         p.fill(backgroundTextColour);
+        //         p.text(y, pos + 15, p.mouseY + 15);
+        //     }
+        // }
 
         function drawThirdView(bgCol, colours, gHeight, margin, alphaWeight) {
             pg3.background(bgCol);

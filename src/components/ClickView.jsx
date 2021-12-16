@@ -111,7 +111,7 @@ const ClickView = props => {
                     pg4.rect(start, baseline+5, width, geneHeight);
                 }
             }
-            p.image(pg4, margin/2, 0);
+            p.image(pg4, 0, 0);
         }
     }
 
